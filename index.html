@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ONU Config Generator</title>
+<style>
+:root{--bg:#eef2f4;--panel:#fff;--ink:#16232c;--mute:#5a6b76;--line:#cdd8de;--acc:#0b6e63;--accfg:#fff;--out:#10202a;--outfg:#d7ecea;--warn:#a85a00;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e171d;--panel:#16232b;--ink:#e4eef2;--mute:#8fa3ae;--line:#2a3b46;--acc:#3fbfae;--accfg:#06201c;--out:#0a1318;--outfg:#c9e8e4;--warn:#e0a24a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e171d;--panel:#16232b;--ink:#e4eef2;--mute:#8fa3ae;--line:#2a3b46;--acc:#3fbfae;--accfg:#06201c;--out:#0a1318;--outfg:#c9e8e4;--warn:#e0a24a;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+main{max-width:980px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:1.45rem;margin:0 0 4px}
+.sub{color:var(--mute);margin:0 0 18px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:760px){.grid{grid-template-columns:1fr}}
+section{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+h2{font-size:1rem;margin:0 0 12px}
+.seg{display:flex;margin-bottom:14px}
+.seg button{flex:1;padding:9px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:inherit;cursor:pointer}
+.seg button:first-child{border-radius:8px 0 0 8px}.seg button:last-child{border-radius:0 8px 8px 0;border-left:0}
+.seg button[aria-pressed="true"]{background:var(--acc);color:var(--accfg);border-color:var(--acc)}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.f .w{grid-column:1/-1}
+.f .h{display:none}
+label{display:block;font-size:.86rem;color:var(--mute);margin-bottom:3px}
+input,textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink);font:inherit}
+input:focus,textarea:focus,button:focus-visible,summary:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+pre{margin:0;background:var(--out);color:var(--outfg);padding:14px;border-radius:8px;font:13.5px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;word-break:break-all;min-height:200px;max-width:100%;overflow-x:auto}
+.row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center}
+.btn{padding:9px 16px;border-radius:8px;border:1px solid var(--acc);background:var(--acc);color:var(--accfg);font:inherit;cursor:pointer}
+.btn.alt{background:transparent;color:var(--acc)}
+.miss{font-size:.86rem;color:var(--warn)}
+.hint{font-size:.86rem;color:var(--mute)}
+details{margin-top:14px}summary{cursor:pointer;color:var(--acc)}
+textarea{font:13px/1.5 ui-monospace,Consolas,monospace;min-height:190px;margin-top:8px}
+footer{margin-top:24px;text-align:center;font-size:.86rem;color:var(--mute)}
+[hidden]{display:none!important}
+a.btn{display:inline-block;text-decoration:none}
+.r{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.r input{flex:1 1 84px;min-width:0}
+.r input[data-k="sn"]{flex:2 1 150px}
+.r .x{flex:0 0 40px;border:1px solid var(--line);border-radius:7px;background:transparent;color:var(--mute);font:inherit;font-size:1.2rem;cursor:pointer}
+#grid.v [data-k="pon"]{display:none}
+#paste{min-height:110px}
+</style>
+</head>
+<body>
+<main>
+<h1>ONU config generator</h1>
+<p class="sub">Enter the ONU details, then copy the commands into the OLT CLI.</p>
+<div class="grid">
+<section>
+<h2>ONU details</h2>
+<div class="seg" role="group" aria-label="Entry mode"><button id="mS" aria-pressed="true">Single</button><button id="mB" aria-pressed="false">Batch</button></div>
+<div class="seg" role="group" aria-label="OLT type">
+<button id="mV" aria-pressed="true">VSOL GPON</button><button id="mC" aria-pressed="false">C-Data GPON</button>
+</div>
+<div class="f" id="single">
+<div id="gpon" class="h"><label for="pon">PON</label><input id="pon" value="1" inputmode="numeric"></div>
+<div><label for="index">Index</label><input id="index" inputmode="numeric"></div>
+<div><label for="vlan">VLAN</label><input id="vlan" inputmode="numeric"></div>
+<div class="w"><label for="sn">SN</label><input id="sn" placeholder="HWTC9f40767a" autocomplete="off" autocapitalize="off"></div>
+<div class="w"><label for="cid">CID</label><input id="cid" inputmode="numeric" autocomplete="off"></div>
+</div>
+<div class="f" id="common" style="margin-top:10px"><div><label for="profile">Profile (all ONUs)</label><input id="profile" autocapitalize="characters"></div></div>
+<div class="row" id="nextrow"><button class="btn alt" id="next">Next ONU (index +1, clear serial and CID)</button></div>
+<div id="batch" hidden>
+<div id="grid" class="v" style="margin-top:12px"></div>
+<div class="row"><button class="btn alt" id="addrow">Add row</button><button class="btn alt" id="clr">Clear all rows</button></div>
+<p class="hint" id="rowhint"></p>
+<details><summary>Paste from Excel</summary>
+<textarea id="paste" spellcheck="false" aria-label="Paste rows"></textarea>
+<div class="row"><button class="btn alt" id="import">Add pasted rows</button></div>
+<p class="miss" id="perr"></p>
+<p class="hint" id="phint"></p>
+</details>
+</div>
+</section>
+<section>
+<h2>Commands</h2>
+<pre id="out" aria-live="polite"></pre>
+<div class="row"><button class="btn" id="copy">Copy commands</button><span class="miss" id="miss"></span></div>
+<details><summary>Edit template</summary>
+<textarea id="tpl" spellcheck="false" aria-label="Command template"></textarea>
+<div class="row"><button class="btn alt" id="rst">Reset template</button></div>
+<p class="hint">Placeholders: {pon} {index} {vlan} {profile} {sn} {cid}. Changes are saved in this browser.</p>
+</details>
+</section>
+</div>
+<section id="finder" style="margin-top:16px">
+<h2>Index finder</h2>
+<p class="hint">Paste the ONU list from the OLT (for example the output of the show onu command). The tool finds the indexes already in use and suggests the next free one.</p>
+<label for="fin">OLT output</label>
+<textarea id="fin" spellcheck="false" style="margin-top:0"></textarea>
+<div class="f" style="margin-top:10px"><div><label for="fmax">Max index per PON</label><input id="fmax" value="128" inputmode="numeric"></div></div>
+<div class="row"><button class="btn" id="ffind">Find free index</button><button class="btn alt" id="fuse">Use as Index</button></div>
+<pre id="fres" aria-live="polite" style="min-height:0;margin-top:10px"></pre>
+</section>
+<section id="help" style="margin-top:16px">
+<h2>Help desk</h2>
+<p class="hint">Need help with an ONU config? Call or message the help desk.</p>
+<div class="row"><a class="btn" href="tel:+8801719961987" target="_blank" rel="noopener">Call +8801719961987</a><a class="btn alt" href="https://wa.me/8801719961987" target="_blank" rel="noopener">WhatsApp</a></div>
+</section>
+<footer>© 2026 Elias Hossen. All rights reserved.</footer>
+</main>
+<script>
+(function () {
+  const T = {
+    V: "onu add {index} profile {profile} sn {sn}\nonu {index} tcont 1 dba default1\nonu {index} gemport 1 tcont 1\nonu {index} service 1 gemport 1 vlan {vlan}\nonu {index} service-port 1 gemport 1 uservlan {vlan} vlan {vlan}\nonu {index} portvlan eth 1 mode tag vlan {vlan}\nonu {index} desc CID-{cid}\nwrite\nshow onu {index} optical_info",
+    C: "ont add {pon} {index} sn-auth {sn} ont-lineprofile-id {profile} ont-srvprofile-id {profile}\nont port native-vlan {pon} {index} eth 1 vlan {vlan}\nont description {pon} {index} CID-{cid}\nexit\nservice-port autoindex vlan {vlan} gpon 0/0 port {pon} ont {index} gemport 1 multi-service user-vlan {vlan} tag-action translate\nsave"
+  };
+  const P = { V: "D401", C: "1" };
+  const COLS = { V: ["index", "vlan", "sn", "cid"], C: ["pon", "index", "vlan", "sn", "profile", "cid"] };
+  const KEYS = ["pon", "index", "vlan", "sn", "cid"];
+  const PH = { pon: "PON", index: "Index", vlan: "VLAN", sn: "SN", cid: "CID (optional)" };
+  const ids = ["pon", "index", "vlan", "profile", "sn", "cid"];
+  let mode = "V", kind = "S", rows = [];
+  function $(id) { return document.getElementById(id); }
+  function store(key, value) {
+    try { if (value === null) localStorage.removeItem(key); else localStorage.setItem(key, value); } catch (e) {}
+  }
+  function load(key) {
+    try { return localStorage.getItem(key); } catch (e) { return null; }
+  }
+  function blank() { return { pon: "1", index: "", vlan: "", sn: "", cid: "" }; }
+  function fill(t, v) {
+    Object.keys(v).forEach(function (k) { t = t.split("{" + k + "}").join(v[k]); });
+    return t;
+  }
+  function dropCid(t, v) {
+    return v.cid ? t : t.split("\n").filter(function (l) { return l.indexOf("{cid}") < 0; }).join("\n");
+  }
+  function build() {
+    const t = $("tpl").value, profile = $("profile").value.trim();
+    const blocks = [], errs = [], seenI = {}, seenS = {};
+    let skipped = 0;
+    if (!profile) errs.push("Profile is empty");
+    rows.forEach(function (r, i) {
+      const n = "Row " + (i + 1);
+      const v = { pon: (r.pon || "").trim(), index: (r.index || "").trim(), vlan: (r.vlan || "").trim(), sn: (r.sn || "").trim(), cid: (r.cid || "").trim(), profile: profile };
+      if (!v.sn && !v.cid) { skipped++; return; }
+      const miss = [];
+      if (mode === "C" && !v.pon) miss.push("PON");
+      if (!v.index) miss.push("Index");
+      if (!v.vlan) miss.push("VLAN");
+      if (!v.sn) miss.push("SN");
+      if (miss.length) { errs.push(n + ": missing " + miss.join(", ")); return; }
+      if (!/^\d+$/.test(v.index)) { errs.push(n + ": Index must be a number"); return; }
+      const ki = (mode === "C" ? v.pon : "") + "/" + v.index;
+      if (seenI[ki]) errs.push(n + ": duplicate index " + v.index + " (also row " + seenI[ki] + ")"); else seenI[ki] = i + 1;
+      const ks = v.sn.toLowerCase();
+      if (seenS[ks]) errs.push(n + ": duplicate SN (also row " + seenS[ks] + ")"); else seenS[ks] = i + 1;
+      blocks.push(fill(dropCid(t, v), v));
+    });
+    const tails = [], shows = [];
+    const body = blocks.map(function (b) {
+      return b.split("\n").filter(function (l) {
+        const s = l.trim();
+        if (/^(write|save)$/.test(s)) { if (tails.indexOf(s) < 0) tails.push(s); return false; }
+        if (/^show /.test(s)) { shows.push(s); return false; }
+        return true;
+      }).join("\n");
+    });
+    const text = body.join("\n\n") + (blocks.length && tails.length ? "\n\n" + tails.join("\n") : "") + (shows.length ? "\n" + shows.join("\n") : "");
+    return { text: text, errs: errs, count: blocks.length, skipped: skipped };
+  }
+  function save() {
+    ids.forEach(function (k) { if (k !== "profile" && $(k)) store("in_" + k, $(k).value); });
+    store("in_rowsjson", JSON.stringify(rows));
+    store("in_kind", kind);
+  }
+  function render() {
+    const tpl = $("tpl");
+    if (!tpl) return;
+    save();
+    if (kind === "B") {
+      const b = build();
+      $("out").textContent = b.text;
+      $("miss").textContent = b.errs.join(" | ");
+      $("rowhint").textContent = b.count + " ONU" + (b.count === 1 ? "" : "s") + " ready" + (b.skipped ? ", " + b.skipped + " empty row" + (b.skipped === 1 ? "" : "s") + " skipped" : "") + ".";
+      return;
+    }
+    let text = tpl.value;
+    const missing = [];
+    ids.forEach(function (k) {
+      const el = $(k);
+      if (!el) return;
+      const raw = el.value.trim();
+      if (!raw && text.indexOf("{" + k + "}") > -1) missing.push(k);
+      text = text.split("{" + k + "}").join(raw || "{" + k + "}");
+    });
+    $("out").textContent = text;
+    $("miss").textContent = missing.length ? "Empty: " + missing.join(", ") : "";
+  }
+  function drawRows() {
+    const g = $("grid");
+    g.className = mode === "C" ? "" : "v";
+    g.textContent = "";
+    rows.forEach(function (r, i) {
+      const d = document.createElement("div");
+      d.className = "r";
+      KEYS.forEach(function (k) {
+        const inp = document.createElement("input");
+        inp.setAttribute("data-k", k);
+        inp.placeholder = PH[k];
+        inp.value = r[k] || "";
+        inp.setAttribute("aria-label", PH[k] + ", row " + (i + 1));
+        inp.setAttribute("autocomplete", "off");
+        if (k !== "sn") inp.setAttribute("inputmode", "numeric");
+        inp.addEventListener("input", function () { r[k] = inp.value; render(); });
+        d.appendChild(inp);
+      });
+      const x = document.createElement("button");
+      x.className = "x";
+      x.textContent = "\u00d7";
+      x.setAttribute("aria-label", "Remove row " + (i + 1));
+      x.onclick = function () { rows.splice(i, 1); if (!rows.length) rows.push(blank()); drawRows(); render(); };
+      d.appendChild(x);
+      g.appendChild(d);
+    });
+  }
+  function setMode(m) {
+    mode = m;
+    $("mV").setAttribute("aria-pressed", String(m === "V"));
+    $("mC").setAttribute("aria-pressed", String(m === "C"));
+    $("gpon").className = m === "C" ? "" : "h";
+    $("profile").value = P[m];
+    $("tpl").value = load("tpl_" + m) || T[m];
+    $("phint").textContent = "One ONU per line. Columns: " + COLS[m].map(function (c) { return c === "sn" ? "SN" : c === "cid" ? "CID" : c === "vlan" ? "VLAN" : c === "pon" ? "PON" : c === "index" ? "Index" : "Profile"; }).join(", ") + ". The last column is optional.";
+    $("paste").placeholder = m === "V" ? "42\t22101\tHWTC9f40767a\t379038" : "2\t54\t3840\tHWTC62315150\t1\t374583";
+    drawRows();
+    render();
+  }
+  function setKind(k) {
+    kind = k;
+    $("mS").setAttribute("aria-pressed", String(k === "S"));
+    $("mB").setAttribute("aria-pressed", String(k === "B"));
+    $("single").hidden = k === "B";
+    $("nextrow").hidden = k === "B";
+    $("batch").hidden = k !== "B";
+    render();
+  }
+  function importRows() {
+    const cols = COLS[mode], need = cols.length - 1, added = [], errs = [];
+    let prof = null;
+    $("paste").value.split(/\r?\n/).forEach(function (line, i) {
+      const raw = line.replace(/\s+$/, "");
+      if (!raw.trim()) return;
+      let p = raw.indexOf("\t") > -1 ? raw.split("\t") : raw.indexOf(",") > -1 ? raw.split(",") : raw.trim().split(/\s+/);
+      while (p.length > cols.length && p[0].trim() === "") p.shift();
+      p = p.map(function (x) { return x.replace(/^["']+|["']+$/g, "").trim(); });
+      if (p.length !== cols.length && p.length !== need) { errs.push("Line " + (i + 1) + ": expected " + need + " or " + cols.length + " columns, got " + p.length); return; }
+      const v = {};
+      cols.forEach(function (c, j) { v[c] = j < p.length ? p[j] : ""; });
+      if (!/^\d+$/.test(v.index)) { if (!added.length && !errs.length) return; errs.push("Line " + (i + 1) + ": Index must be a number"); return; }
+      if (mode === "C" && v.profile) prof = v.profile;
+      added.push({ pon: v.pon || $("pon").value || "1", index: v.index, vlan: v.vlan, sn: v.sn, cid: v.cid || "" });
+    });
+    $("perr").textContent = errs.join(" | ");
+    if (!added.length) return;
+    const empty = rows.every(function (r) { return !r.sn && !r.cid && !r.index && !r.vlan; });
+    rows = empty ? added : rows.concat(added);
+    if (prof) $("profile").value = prof;
+    if (!errs.length) $("paste").value = "";
+    drawRows();
+    render();
+  }
+  async function copyTextToClipboard(text) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch (e) {}
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.top = "-9999px";
+    ta.style.left = "-9999px";
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+  function init() {
+    const tpl = $("tpl");
+    $("mV").onclick = function () { setMode("V"); };
+    $("mC").onclick = function () { setMode("C"); };
+    $("mS").onclick = function () { setKind("S"); };
+    $("mB").onclick = function () { setKind("B"); };
+    ids.forEach(function (k) { const el = $(k); if (el) el.addEventListener("input", render); });
+    tpl.addEventListener("input", function () { store("tpl_" + mode, tpl.value); render(); });
+    $("rst").onclick = function () { store("tpl_" + mode, null); tpl.value = T[mode]; render(); };
+    $("next").onclick = function () {
+      const n = parseInt($("index").value, 10);
+      if (!isNaN(n)) $("index").value = String(n + 1);
+      $("sn").value = "";
+      $("cid").value = "";
+      render();
+      $("sn").focus();
+    };
+    $("addrow").onclick = function () {
+      const last = rows[rows.length - 1] || {};
+      const n = parseInt(last.index, 10);
+      rows.push({ pon: last.pon || $("pon").value || "1", index: isNaN(n) ? "" : String(n + 1), vlan: last.vlan || "", sn: "", cid: "" });
+      drawRows();
+      render();
+      try { const f = $("grid").querySelectorAll('[data-k="sn"]'); f[f.length - 1].focus(); } catch (e) {}
+    };
+    $("clr").onclick = function () { rows = [blank()]; drawRows(); render(); };
+    $("import").onclick = importRows;
+    $("copy").onclick = async function () {
+      const copyBtn = $("copy");
+      let ok = false;
+      try { ok = await copyTextToClipboard($("out").textContent); } catch (err) { ok = false; }
+      copyBtn.textContent = ok ? "Copied" : "Copy failed";
+      if (!ok) $("miss").textContent = "Copy blocked by browser. Select text and copy manually.";
+      setTimeout(function () {
+        copyBtn.textContent = "Copy commands";
+        if (!ok) render();
+      }, 1800);
+    };
+    ["pon", "index", "vlan", "sn", "cid"].forEach(function (k) {
+      const v = load("in_" + k);
+      if (v !== null) $(k).value = v;
+    });
+    try {
+      const saved = JSON.parse(load("in_rowsjson") || "[]");
+      if (Array.isArray(saved) && saved.length) rows = saved;
+    } catch (e) {}
+    if (!rows.length) rows = [blank()];
+    let nextFree = 0;
+    $("ffind").onclick = function () {
+      const max = parseInt($("fmax").value, 10) || 128;
+      const used = {};
+      $("fin").value.split(/\r?\n/).forEach(function (line) {
+        const m = line.match(/\d+\/\d+(?:\/\d+)?:(\d+)/) || line.match(/^\s*(\d+)(?=\s|$)/);
+        if (!m) return;
+        const n = parseInt(m[1], 10);
+        if (n >= 1 && n <= max) used[n] = true;
+      });
+      const list = Object.keys(used).map(Number).sort(function (a, b) { return a - b; });
+      if (!list.length) { nextFree = 0; $("fres").textContent = "No ONU indexes found. Paste the OLT list, one ONU per line, with the index at the start of the line or in the 0/1:5 form."; return; }
+      const high = list[list.length - 1], free = [];
+      for (let i = 1; i <= max; i++) if (!used[i]) free.push(i);
+      nextFree = free.length ? free[0] : 0;
+      const gaps = free.filter(function (n) { return n < high; });
+      $("fres").textContent = "Found " + list.length + " ONU indexes in use (highest " + high + ").\n" +
+        (nextFree ? "Next free index: " + nextFree + "\n" : "No free index left up to " + max + ".\n") +
+        (gaps.length ? "Free gaps below " + high + ": " + gaps.slice(0, 20).join(", ") + (gaps.length > 20 ? " ..." : "") + "\n" : "No gaps below " + high + ".\n") +
+        (high < max ? "Next after highest: " + (high + 1) : "");
+    };
+    $("fuse").onclick = function () {
+      if (!nextFree) return;
+      $("index").value = String(nextFree);
+      const r = rows.find(function (x) { return !x.index; });
+      if (r) { r.index = String(nextFree); drawRows(); }
+      render();
+    };
+    setMode("V");
+    if (load("in_kind") === "B") setKind("B");
+  }
+  document.addEventListener("DOMContentLoaded", init);
+})();
+</script>
+</body>
+</html>
