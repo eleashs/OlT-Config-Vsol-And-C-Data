@@ -3,110 +3,666 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ONU Config Generator</title>
+<meta name="theme-color" content="#6366f1">
+<title>ONU Config Generator v2.0 - Ultra Modern Dashboard</title>
+<!-- Tailwind CSS CDN -->
+<script>
+// Hide the Tailwind CDN production notice in the console
+(function(){var w=console.warn;console.warn=function(){var m=arguments[0];if(typeof m==="string"&&m.indexOf("cdn.tailwindcss.com should not be used")!==-1)return;return w.apply(console,arguments)}})();
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- FontAwesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Google Font Inter & JetBrains Mono -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
-:root{--bg:#eef2f4;--panel:#fff;--ink:#16232c;--mute:#5a6b76;--line:#cdd8de;--acc:#0b6e63;--accfg:#fff;--out:#10202a;--outfg:#d7ecea;--warn:#a85a00;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e171d;--panel:#16232b;--ink:#e4eef2;--mute:#8fa3ae;--line:#2a3b46;--acc:#3fbfae;--accfg:#06201c;--out:#0a1318;--outfg:#c9e8e4;--warn:#e0a24a;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0e171d;--panel:#16232b;--ink:#e4eef2;--mute:#8fa3ae;--line:#2a3b46;--acc:#3fbfae;--accfg:#06201c;--out:#0a1318;--outfg:#c9e8e4;--warn:#e0a24a;color-scheme:dark}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
-main{max-width:980px;margin:0 auto;padding:20px 16px 40px}
-h1{font-size:1.45rem;margin:0 0 4px}
-.sub{color:var(--mute);margin:0 0 18px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media (max-width:760px){.grid{grid-template-columns:1fr}}
-section{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
-h2{font-size:1rem;margin:0 0 12px}
-.seg{display:flex;margin-bottom:14px}
-.seg button{flex:1;padding:9px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:inherit;cursor:pointer}
-.seg button:first-child{border-radius:8px 0 0 8px}.seg button:last-child{border-radius:0 8px 8px 0;border-left:0}
-.seg button[aria-pressed="true"]{background:var(--acc);color:var(--accfg);border-color:var(--acc)}
-.f{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.f .w{grid-column:1/-1}
-.f .h{display:none}
-label{display:block;font-size:.86rem;color:var(--mute);margin-bottom:3px}
-input,textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink);font:inherit}
-input:focus,textarea:focus,button:focus-visible,summary:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
-pre{margin:0;background:var(--out);color:var(--outfg);padding:14px;border-radius:8px;font:13.5px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;word-break:break-all;min-height:200px;max-width:100%;overflow-x:auto}
-.row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center}
-.btn{padding:9px 16px;border-radius:8px;border:1px solid var(--acc);background:var(--acc);color:var(--accfg);font:inherit;cursor:pointer}
-.btn.alt{background:transparent;color:var(--acc)}
-.miss{font-size:.86rem;color:var(--warn)}
-.hint{font-size:.86rem;color:var(--mute)}
-details{margin-top:14px}summary{cursor:pointer;color:var(--acc)}
-textarea{font:13px/1.5 ui-monospace,Consolas,monospace;min-height:190px;margin-top:8px}
-footer{margin-top:24px;text-align:center;font-size:.86rem;color:var(--mute)}
-[hidden]{display:none!important}
-a.btn{display:inline-block;text-decoration:none}
-.r{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--line)}
-.r input{flex:1 1 84px;min-width:0}
-.r input[data-k="sn"]{flex:2 1 150px}
-.r .x{flex:0 0 40px;border:1px solid var(--line);border-radius:7px;background:transparent;color:var(--mute);font:inherit;font-size:1.2rem;cursor:pointer}
-#grid.v [data-k="pon"]{display:none}
-#paste{min-height:110px}
+:root {
+  --bg-dark: #0b0f19;
+  --accent-indigo: #6366f1;
+  --accent-purple: #8b5cf6;
+  --accent-cyan: #06b6d4;
+  --accent-emerald: #10b981;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background: #070a12;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.22) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.2) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(6, 182, 212, 0.15) 0px, transparent 50%);
+  background-attachment: fixed;
+  color: #f1f5f9;
+  min-height: 100vh;
+}
+
+/* Vibrant Glassmorphism Panels */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease-in-out;
+}
+
+.glass-panel:hover {
+  border-color: rgba(99, 102, 241, 0.35);
+  box-shadow: 0 14px 35px -10px rgba(99, 102, 241, 0.2);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(8px);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.5);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.8);
+}
+
+/* Form Styling */
+input, textarea, select {
+  background: rgba(15, 23, 42, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  color: #f8fafc !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none !important;
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3) !important;
+  background: rgba(15, 23, 42, 0.9) !important;
+}
+
+input[aria-invalid="true"] {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25) !important;
+}
+
+/* Vibrant Button Styles */
+.btn-gradient-primary {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  box-shadow: 0 4px 15px -3px rgba(99, 102, 241, 0.4);
+  transition: all 0.2s ease;
+}
+.btn-gradient-primary:hover {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  box-shadow: 0 6px 20px -2px rgba(99, 102, 241, 0.6);
+  transform: translateY(-1px);
+}
+
+.btn-gradient-secondary {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #e2e8f0;
+  transition: all 0.2s ease;
+}
+.btn-gradient-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.btn-gradient-cyan {
+  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  box-shadow: 0 4px 15px -3px rgba(6, 182, 212, 0.4);
+  transition: all 0.2s ease;
+}
+.btn-gradient-cyan:hover {
+  background: linear-gradient(135deg, #0891b2 0%, #2563eb 100%);
+  box-shadow: 0 6px 20px -2px rgba(6, 182, 212, 0.6);
+  transform: translateY(-1px);
+}
+
+/* Toggle Switch Buttons */
+.seg-btn {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.seg-btn[aria-pressed="true"] {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 4px 14px -2px rgba(99, 102, 241, 0.5);
+}
+
+/* Console Code Box */
+pre#out {
+  font-family: 'JetBrains Mono', monospace;
+  background: #030712 !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.9);
+}
+
+/* Batch Table Row Format */
+.r {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  padding: 10px;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  align-items: center;
+}
+.r input {
+  flex: 1 1 90px;
+  min-width: 0;
+}
+.r input[data-k="sn"] {
+  flex: 2 1 140px;
+}
+.r .x {
+  flex: 0 0 36px;
+  height: 36px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: all 0.2s;
+}
+.r .x:hover {
+  background: rgba(239, 68, 68, 0.3);
+  color: #ffffff;
+}
+#grid.v [data-k="pon"] {
+  display: none;
+}
+/* Duplicate ONU Finder */
+.dup-grp { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; margin-bottom: 10px; overflow: hidden; }
+.dup-gh { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+.dup-tag { display: inline-block; padding: 1px 10px; border-radius: 9999px; font-size: 0.72rem; font-weight: 700; }
+.dup-clean, .dup-active { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+.dup-multi, .dup-inactive { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+.dup-allinactive { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+.dup-tbl { width: 100%; min-width: 420px; border-collapse: collapse; font-size: 0.75rem; }
+.dup-tbl td { padding: 7px 14px; border-top: 1px solid rgba(255, 255, 255, 0.06); color: #cbd5e1; }
+.dup-tbl tr:first-child td { border-top: 0; }
+.dup-chk { width: 16px; height: 16px; accent-color: #6366f1; }
+.dup-out { font-family: 'JetBrains Mono', monospace; height: 110px; margin-bottom: 6px; background: #030712 !important; color: #38bdf8 !important; border: 1px solid rgba(56, 189, 248, 0.25) !important; }
 </style>
 </head>
-<body>
-<main>
-<h1>ONU config generator</h1>
-<p class="sub">Enter the ONU details, then copy the commands into the OLT CLI.</p>
-<div class="grid">
-<section>
-<h2>ONU details</h2>
-<div class="seg" role="group" aria-label="Entry mode"><button id="mS" aria-pressed="true">Single</button><button id="mB" aria-pressed="false">Batch</button></div>
-<div class="seg" role="group" aria-label="OLT type">
-<button id="mV" aria-pressed="true">VSOL GPON</button><button id="mC" aria-pressed="false">C-Data GPON</button>
-</div>
-<div class="f" id="single">
-<div id="gpon" class="h"><label for="pon">PON</label><input id="pon" value="1" inputmode="numeric"></div>
-<div><label for="index">Index</label><input id="index" inputmode="numeric"></div>
-<div><label for="vlan">VLAN</label><input id="vlan" inputmode="numeric"></div>
-<div class="w"><label for="sn">SN</label><input id="sn" placeholder="HWTC9f40767a" autocomplete="off" autocapitalize="off"></div>
-<div class="w"><label for="cid">CID</label><input id="cid" inputmode="numeric" autocomplete="off"></div>
-</div>
-<div class="f" id="common" style="margin-top:10px"><div><label for="profile">Profile (all ONUs)</label><input id="profile" autocapitalize="characters"></div></div>
-<div class="row" id="nextrow"><button class="btn alt" id="next">Next ONU (index +1, clear serial and CID)</button></div>
-<div id="batch" hidden>
-<div id="grid" class="v" style="margin-top:12px"></div>
-<div class="row"><button class="btn alt" id="addrow">Add row</button><button class="btn alt" id="clr">Clear all rows</button></div>
-<p class="hint" id="rowhint"></p>
-<details><summary>Paste from Excel</summary>
-<textarea id="paste" spellcheck="false" aria-label="Paste rows"></textarea>
-<div class="row"><button class="btn alt" id="import">Add pasted rows</button></div>
-<p class="miss" id="perr"></p>
-<p class="hint" id="phint"></p>
-</details>
-</div>
-</section>
-<section>
-<h2>Commands</h2>
-<pre id="out" aria-live="polite"></pre>
-<div class="row"><button class="btn" id="copy">Copy commands</button><span class="miss" id="miss"></span></div>
-<details><summary>Edit template</summary>
-<textarea id="tpl" spellcheck="false" aria-label="Command template"></textarea>
-<div class="row"><button class="btn alt" id="rst">Reset template</button></div>
-<p class="hint">Placeholders: {pon} {index} {vlan} {profile} {sn} {cid}. Changes are saved in this browser.</p>
-</details>
-</section>
-</div>
-<section id="finder" style="margin-top:16px">
-<h2>Index finder</h2>
-<p class="hint">Paste the ONU list from the OLT (for example the output of the show onu command). The tool finds the indexes already in use and suggests the next free one.</p>
-<label for="fin">OLT output</label>
-<textarea id="fin" spellcheck="false" style="margin-top:0"></textarea>
-<div class="f" style="margin-top:10px"><div><label for="fmax">Max index per PON</label><input id="fmax" value="128" inputmode="numeric"></div></div>
-<div class="row"><button class="btn" id="ffind">Find free index</button><button class="btn alt" id="fuse">Use as Index</button></div>
-<pre id="fres" aria-live="polite" style="min-height:0;margin-top:10px"></pre>
-</section>
-<section id="help" style="margin-top:16px">
-<h2>Help desk</h2>
-<p class="hint">Need help with an ONU config? Call or message the help desk.</p>
-<div class="row"><a class="btn" href="tel:+8801719961987" target="_blank" rel="noopener">Call +8801719961987</a><a class="btn alt" href="https://wa.me/8801719961987" target="_blank" rel="noopener">WhatsApp</a></div>
-</section>
-<footer>© 2026 Elias Hossen. All rights reserved.</footer>
+
+<body class="pb-16 antialiased">
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+
+  <!-- TOPBAR HEADER -->
+  <header class="topbar glass-panel rounded-2xl p-4 sm:p-5 mb-8 flex flex-col md:flex-row items-center justify-between gap-4 relative overflow-hidden">
+    <div class="absolute -right-10 -top-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
+    
+    <div class="brand flex items-center gap-4 z-10">
+      <div class="brandmark w-12 h-12 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-cyan-400 flex items-center justify-center text-white font-extrabold text-xl shadow-lg shadow-indigo-500/30">
+        <i class="fa-solid fa-network-wired"></i>
+      </div>
+      <div>
+        <div class="brandtitle text-xl font-extrabold bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent flex items-center gap-2">
+          ONU Config Manager
+          <span class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold">v2.0 Pro</span>
+        </div>
+        <div class="text-xs text-slate-400 font-medium flex items-center gap-2 mt-0.5">
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          VSOL &amp; C-Data GPON OLT Automated Suite
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navlinks flex flex-wrap gap-2 text-xs sm:text-sm font-semibold z-10" aria-label="Main navigation">
+      <a href="#dashboard" class="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white transition-all border border-slate-700/50 flex items-center gap-1.5">
+        <i class="fa-solid fa-chart-pie text-indigo-400"></i> Dashboard
+      </a>
+      <a href="#config" class="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white transition-all border border-slate-700/50 flex items-center gap-1.5">
+        <i class="fa-solid fa-sliders text-cyan-400"></i> Config Generator
+      </a>
+      <a href="#saved" class="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white transition-all border border-slate-700/50 flex items-center gap-1.5">
+        <i class="fa-solid fa-bookmark text-amber-400"></i> Saved Presets
+      </a>
+      <a href="#onuList" class="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white transition-all border border-slate-700/50 flex items-center gap-1.5">
+        <i class="fa-solid fa-list-check text-emerald-400"></i> ONU Work Log
+      </a>
+      <a href="#finder" class="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white transition-all border border-slate-700/50 flex items-center gap-1.5">
+        <i class="fa-solid fa-magnifying-glass text-purple-400"></i> Index Finder
+      </a>
+      <a href="#dupfinder" class="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white transition-all border border-slate-700/50 flex items-center gap-1.5">
+        <i class="fa-solid fa-clone text-rose-400"></i> Duplicate Finder
+      </a>
+    </nav>
+  </header>
+
+  <!-- STATS DASHBOARD -->
+  <section id="dashboard" class="glass-panel rounded-2xl p-6 mb-8 relative overflow-hidden">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-bold text-white flex items-center gap-2">
+        <i class="fa-solid fa-gauge-high text-indigo-400"></i> Configuration Dashboard
+      </h2>
+      <span class="text-xs text-slate-400 bg-slate-800/80 px-2.5 py-1 rounded-full border border-slate-700">Offline &amp; Browser-Stored</span>
+    </div>
+
+    <div class="dashgrid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Stat 1 -->
+      <div class="stat glass-card rounded-xl p-4 border border-indigo-500/20 relative overflow-hidden">
+        <div class="absolute right-3 top-3 w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-lg">
+          <i class="fa-regular fa-calendar-check"></i>
+        </div>
+        <div class="statlabel text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Today's Configs</div>
+        <div class="statnum text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400" id="countToday">0</div>
+        <div class="hint text-xs text-slate-500 mt-1">Generated today</div>
+      </div>
+
+      <!-- Stat 2 -->
+      <div class="stat glass-card rounded-xl p-4 border border-cyan-500/20 relative overflow-hidden">
+        <div class="absolute right-3 top-3 w-10 h-10 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-layer-group"></i>
+        </div>
+        <div class="statlabel text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Configs</div>
+        <div class="statnum text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400" id="countTotal">0</div>
+        <div class="hint text-xs text-slate-500 mt-1">All OLT types</div>
+      </div>
+
+      <!-- Stat 3 -->
+      <div class="stat glass-card rounded-xl p-4 border border-emerald-500/20 relative overflow-hidden">
+        <div class="absolute right-3 top-3 w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-server"></i>
+        </div>
+        <div class="statlabel text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">VSOL Configs</div>
+        <div class="statnum text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400" id="countVsol">0</div>
+        <div class="hint text-xs text-slate-500 mt-1">VSOL GPON OLTs</div>
+      </div>
+
+      <!-- Stat 4 -->
+      <div class="stat glass-card rounded-xl p-4 border border-amber-500/20 relative overflow-hidden">
+        <div class="absolute right-3 top-3 w-10 h-10 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-network-wired"></i>
+        </div>
+        <div class="statlabel text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">C-Data Configs</div>
+        <div class="statnum text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400" id="countCdata">0</div>
+        <div class="hint text-xs text-slate-500 mt-1">C-Data GPON OLTs</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN CONFIGURATION GRID -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8" id="config">
+    
+    <!-- LEFT PANEL: INPUT FORM -->
+    <section class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-indigo-400"></i> ONU Parameters
+          </h2>
+          <span class="text-xs text-slate-400">Index range: 1–128</span>
+        </div>
+
+        <!-- Mode Toggles -->
+        <div class="grid grid-cols-2 gap-3 mb-4">
+          <div>
+            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 block">Entry Mode</label>
+            <div class="seg flex rounded-xl p-1 bg-slate-900/80 border border-slate-700/60" role="group" aria-label="Entry mode">
+              <button id="mS" class="seg-btn flex-1 py-2 px-3 rounded-lg text-xs font-bold" aria-pressed="true">Single ONU</button>
+              <button id="mB" class="seg-btn flex-1 py-2 px-3 rounded-lg text-xs font-bold" aria-pressed="false">Batch Mode</button>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 block">OLT Vendor</label>
+            <div class="seg flex rounded-xl p-1 bg-slate-900/80 border border-slate-700/60" role="group" aria-label="OLT type">
+              <button id="mV" class="seg-btn flex-1 py-2 px-3 rounded-lg text-xs font-bold" aria-pressed="true">VSOL GPON</button>
+              <button id="mC" class="seg-btn flex-1 py-2 px-3 rounded-lg text-xs font-bold" aria-pressed="false">C-Data GPON</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Single ONU Form Fields -->
+        <div class="f grid grid-cols-1 sm:grid-cols-2 gap-3" id="single">
+          <div id="gpon" class="h">
+            <label for="pon" class="text-xs font-bold text-slate-300 mb-1 block">PON Port</label>
+            <input id="pon" value="1" inputmode="numeric" class="w-full rounded-xl px-3 py-2 text-sm" placeholder="e.g. 1">
+          </div>
+          <div>
+            <label for="index" class="text-xs font-bold text-slate-300 mb-1 block">Index (1–128)</label>
+            <input id="index" inputmode="numeric" class="w-full rounded-xl px-3 py-2 text-sm" placeholder="e.g. 25">
+          </div>
+          <div>
+            <label for="vlan" class="text-xs font-bold text-slate-300 mb-1 block">VLAN ID</label>
+            <input id="vlan" inputmode="numeric" class="w-full rounded-xl px-3 py-2 text-sm" placeholder="e.g. 2210">
+          </div>
+          <div class="sm:col-span-2">
+            <label for="sn" class="text-xs font-bold text-slate-300 mb-1 block">Serial Number (SN)</label>
+            <input id="sn" class="w-full rounded-xl px-3 py-2 text-sm font-mono uppercase" placeholder="HWTC9f40767a" autocomplete="off" autocapitalize="off">
+          </div>
+          <div class="sm:col-span-2">
+            <label for="cid" class="text-xs font-bold text-slate-300 mb-1 block">Customer ID / Description (Optional)</label>
+            <input id="cid" inputmode="numeric" class="w-full rounded-xl px-3 py-2 text-sm" placeholder="e.g. 379038" autocomplete="off">
+          </div>
+        </div>
+
+        <!-- Profile Input -->
+        <div class="f grid grid-cols-1 gap-3 mt-3" id="common">
+          <div>
+            <label for="profile" class="text-xs font-bold text-slate-300 mb-1 block">Profile Name / ID (All ONUs)</label>
+            <input id="profile" class="w-full rounded-xl px-3 py-2 text-sm font-semibold" autocapitalize="characters" placeholder="e.g. D401 or 1">
+          </div>
+        </div>
+
+        <div class="row mt-4" id="nextrow">
+          <button class="btn btn-gradient-secondary w-full py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2" id="next">
+            <i class="fa-solid fa-arrow-right text-indigo-400"></i> Next ONU (Index +1, Clear SN &amp; CID)
+          </button>
+        </div>
+
+        <!-- Batch Mode Form -->
+        <div id="batch" hidden class="mt-4">
+          <div id="grid" class="v space-y-2"></div>
+          <div class="flex gap-2 mt-3">
+            <button class="btn btn-gradient-secondary text-xs px-3 py-2 rounded-xl font-bold flex items-center gap-1.5" id="addrow">
+              <i class="fa-solid fa-plus text-emerald-400"></i> Add Row
+            </button>
+            <button class="btn btn-gradient-secondary text-xs px-3 py-2 rounded-xl font-bold text-rose-300 flex items-center gap-1.5" id="clr">
+              <i class="fa-solid fa-trash text-rose-400"></i> Clear All
+            </button>
+          </div>
+          <p class="hint text-xs text-slate-400 mt-2" id="rowhint"></p>
+
+          <details class="mt-4 text-xs">
+            <summary class="cursor-pointer text-indigo-400 font-bold hover:text-indigo-300 transition-colors flex items-center gap-2">
+              <i class="fa-solid fa-file-import"></i> Quick Import / Paste from Excel
+            </summary>
+            <div class="mt-3 p-3 glass-card rounded-xl border border-slate-700/50">
+              <textarea id="paste" spellcheck="false" class="w-full rounded-xl p-2.5 text-xs font-mono h-28" placeholder="Paste columns: PON, Index, VLAN, SN, Profile, CID"></textarea>
+              <div class="mt-2 flex justify-end">
+                <button class="btn btn-gradient-primary text-xs px-4 py-2 rounded-xl font-bold" id="import">
+                  <i class="fa-solid fa-file-circle-plus"></i> Add Pasted Rows
+                </button>
+              </div>
+              <p class="miss text-xs text-amber-400 font-semibold mt-1" id="perr"></p>
+              <p class="hint text-xs text-slate-400 mt-1" id="phint"></p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: COMMAND OUTPUT & TEMPLATES -->
+    <section class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-terminal text-cyan-400"></i> Output Commands
+          </h2>
+          <span class="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-semibold">Live Preview</span>
+        </div>
+
+        <div class="relative group">
+          <pre id="out" aria-live="polite" class="rounded-xl p-4 min-h-[260px] text-xs leading-relaxed overflow-x-auto select-all"></pre>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center gap-3 mt-4">
+          <button class="btn btn-gradient-primary w-full sm:w-auto px-6 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2" id="copy">
+            <i class="fa-solid fa-copy"></i> Copy Commands
+          </button>
+          <span class="miss text-xs font-semibold text-rose-400" id="miss"></span>
+        </div>
+
+        <!-- Editable Template Section -->
+        <details class="mt-6 text-xs">
+          <summary class="cursor-pointer text-indigo-400 font-bold hover:text-indigo-300 transition-colors flex items-center gap-2">
+            <i class="fa-solid fa-code"></i> Customize Syntax Template
+          </summary>
+          <div class="mt-3 p-3 glass-card rounded-xl border border-slate-700/50 space-y-3">
+            <textarea id="tpl" spellcheck="false" class="w-full rounded-xl p-3 text-xs font-mono h-40" aria-label="Command template"></textarea>
+            <div class="flex justify-between items-center">
+              <span class="text-slate-400 text-[11px]">Placeholders: {pon} {index} {vlan} {profile} {sn} {cid}</span>
+              <button class="btn btn-gradient-secondary text-xs px-3 py-1.5 rounded-xl font-bold text-slate-300" id="rst">
+                <i class="fa-solid fa-rotate-left"></i> Reset Template
+              </button>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+  </div>
+
+  <!-- SAVED PRESETS -->
+  <section id="saved" class="glass-panel rounded-2xl p-6 mb-8">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+      <div>
+        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-bookmark text-amber-400"></i> Saved Commands &amp; Presets
+        </h2>
+        <p class="hint text-xs text-slate-400">Save useful command sets locally, then load or copy them again later.</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button class="btn btn-gradient-primary text-xs px-3.5 py-2 rounded-xl font-bold flex items-center gap-1.5" id="saveCommand">
+          <i class="fa-solid fa-floppy-disk"></i> Save Current
+        </button>
+        <button class="btn btn-gradient-secondary text-xs px-3.5 py-2 rounded-xl font-bold flex items-center gap-1.5" id="exportData">
+          <i class="fa-solid fa-file-export text-cyan-400"></i> Export Local Data (JSON)
+        </button>
+        <button class="btn btn-gradient-secondary text-xs px-3.5 py-2 rounded-xl font-bold text-rose-300 flex items-center gap-1.5" id="clearSaved">
+          <i class="fa-solid fa-trash text-rose-400"></i> Clear Saved
+        </button>
+      </div>
+    </div>
+    
+    <div id="savedList" class="text-xs text-slate-400 space-y-3 mt-4">
+      No saved commands yet.
+    </div>
+  </section>
+
+  <!-- ONU WORK LOG LIST -->
+  <section id="onuList" class="glass-panel rounded-2xl p-6 mb-8">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+      <div>
+        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-list-check text-emerald-400"></i> Configured ONU List
+        </h2>
+        <p class="hint text-xs text-slate-400">ONUs are added here when valid commands are copied successfully.</p>
+      </div>
+      <div class="flex gap-2">
+        <button class="btn btn-gradient-secondary text-xs px-3.5 py-2 rounded-xl font-bold flex items-center gap-1.5" id="exportOnus">
+          <i class="fa-solid fa-file-csv text-emerald-400"></i> Export List (CSV)
+        </button>
+        <button class="btn btn-gradient-secondary text-xs px-3.5 py-2 rounded-xl font-bold text-rose-300 flex items-center gap-1.5" id="clearOnus">
+          <i class="fa-solid fa-trash text-rose-400"></i> Clear Log
+        </button>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto rounded-xl border border-slate-700/60 bg-slate-900/60">
+      <table id="onuTable" class="w-full text-left text-xs text-slate-300">
+        <thead class="bg-slate-800/80 text-slate-200 font-bold uppercase tracking-wider text-[11px] border-b border-slate-700">
+          <tr>
+            <th class="p-3">Date / Time</th>
+            <th class="p-3">OLT Type</th>
+            <th class="p-3">PON</th>
+            <th class="p-3">Index</th>
+            <th class="p-3">VLAN</th>
+            <th class="p-3">SN</th>
+            <th class="p-3">User</th>
+          </tr>
+        </thead>
+        <tbody id="onuRows" class="divide-y divide-slate-800">
+          <tr>
+            <td colspan="7" class="p-4 text-center text-slate-500">No copied ONU records yet.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- INDEX FINDER -->
+  <section id="finder" class="glass-panel rounded-2xl p-6 mb-8">
+    <h2 class="text-lg font-bold text-white flex items-center gap-2 mb-1">
+      <i class="fa-solid fa-magnifying-glass text-purple-400"></i> Free Index Finder
+    </h2>
+    <p class="hint text-xs text-slate-400 mb-4">Paste the ONU list output from the OLT to suggest an unused Index ID slot.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="md:col-span-2 space-y-3">
+        <label for="fin" class="text-xs font-bold text-slate-300 block">OLT Output Text</label>
+        <textarea id="fin" spellcheck="false" class="w-full rounded-xl p-3 text-xs font-mono h-32" placeholder="e.g. show onu output..."></textarea>
+      </div>
+      
+      <div class="flex flex-col justify-between space-y-3">
+        <div>
+          <label for="fmax" class="text-xs font-bold text-slate-300 block mb-1">Max Limit</label>
+          <input id="fmax" value="128" inputmode="numeric" readonly class="w-full rounded-xl px-3 py-2 text-sm text-slate-400 cursor-not-allowed">
+        </div>
+        <div class="space-y-2">
+          <button class="btn btn-gradient-primary w-full py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5" id="ffind">
+            <i class="fa-solid fa-search"></i> Find Free Index
+          </button>
+          <button class="btn btn-gradient-cyan w-full py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5" id="fuse">
+            <i class="fa-solid fa-check"></i> Use as Index
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <pre id="fres" aria-live="polite" class="mt-4 rounded-xl p-3 text-xs font-mono bg-slate-950 border border-slate-800 text-purple-300 min-h-[50px]"></pre>
+  </section>
+
+  <!-- DUPLICATE ONU FINDER -->
+  <section id="dupfinder" class="glass-panel rounded-2xl p-6 mb-8">
+    <h2 class="text-lg font-bold text-white flex items-center gap-2 mb-1">
+      <i class="fa-solid fa-clone text-rose-400"></i> Duplicate ONU Finder
+    </h2>
+    <p class="hint text-xs text-slate-400 mb-4">Find ONU serial numbers registered on more than one PON. The active copy stays; the inactive copy gets a delete command, one box per PON. Everything runs in your browser.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="md:col-span-2 space-y-2">
+        <label for="dupIn" class="text-xs font-bold text-slate-300 block">ONU list (paste all PONs together)</label>
+        <textarea id="dupIn" spellcheck="false" class="w-full rounded-xl p-3 text-xs font-mono h-40" placeholder="GPON0/6:3  V691  D401  sn  GPTF00eda14d"></textarea>
+        <p class="hint text-xs text-slate-400" id="dupHint"></p>
+      </div>
+
+      <div class="flex flex-col justify-between space-y-3">
+        <div>
+          <span class="text-xs font-bold text-slate-300 block mb-1">OLT brand</span>
+          <div class="flex gap-2">
+            <button id="dupV" class="seg-btn flex-1 py-2 px-3 rounded-lg text-xs font-bold" aria-pressed="true">VSOL GPON</button>
+            <button id="dupC" class="seg-btn flex-1 py-2 px-3 rounded-lg text-xs font-bold" aria-pressed="false">C-Data GPON</button>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <button class="btn btn-gradient-primary w-full py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5" id="dupGo">
+            <i class="fa-solid fa-search"></i> Find Duplicates
+          </button>
+          <button class="btn btn-gradient-secondary w-full py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5" id="dupEx">
+            <i class="fa-solid fa-flask"></i> Load Example
+          </button>
+          <button class="btn btn-gradient-secondary w-full py-2.5 rounded-xl text-xs font-bold text-rose-300 flex items-center justify-center gap-1.5" id="dupClr">
+            <i class="fa-solid fa-trash"></i> Clear
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="dupSum" class="text-sm font-semibold text-slate-300 mt-5" aria-live="polite">Paste the ONU list, then press Find Duplicates.</div>
+    <div id="dupRes" class="mt-3"></div>
+
+    <div id="dupCmd" hidden class="mt-5">
+      <h3 class="text-sm font-bold text-white mb-1 flex items-center gap-2"><i class="fa-solid fa-terminal text-cyan-400"></i> Delete commands</h3>
+      <p class="hint text-xs text-slate-400 mb-3">One box per PON. Only ticked inactive ONUs are included. Check the command format against your OLT before running it, and save the OLT configuration afterwards.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+        <div><label for="dupT1" class="text-xs text-slate-400 block mb-1">Enter PON</label><input id="dupT1" class="w-full rounded-xl px-3 py-2 text-xs font-mono"></div>
+        <div><label for="dupT2" class="text-xs text-slate-400 block mb-1">Delete ONU</label><input id="dupT2" class="w-full rounded-xl px-3 py-2 text-xs font-mono"></div>
+        <div><label for="dupT3" class="text-xs text-slate-400 block mb-1">Leave PON</label><input id="dupT3" class="w-full rounded-xl px-3 py-2 text-xs font-mono"></div>
+      </div>
+      <p class="text-xs text-slate-500 mb-3">{pon} = 0/6 (VSOL) or 0/0/1 (C-Data), {fs} = 0/0, {port} = 1, {id} = ONU number.</p>
+      <div id="dupOuts"></div>
+      <textarea id="dupBuf" tabindex="-1" aria-hidden="true" style="position:absolute;left:-9999px;height:1px"></textarea>
+      <div class="flex flex-wrap items-center gap-3">
+        <button class="btn btn-gradient-primary px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2" id="dupCopyAll"><i class="fa-regular fa-copy"></i> Copy all PONs</button>
+        <span class="text-xs font-semibold text-emerald-400" id="dupMsg" role="status"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOCAL USER AUTHENTICATION -->
+  <section id="account" class="glass-panel rounded-2xl p-6 mb-8">
+    <h2 class="text-lg font-bold text-white flex items-center gap-2 mb-1">
+      <i class="fa-solid fa-user-lock text-indigo-400"></i> User Login Session
+    </h2>
+    <p class="hint text-xs text-slate-400 mb-4">Browser-local user registration for tagging operator logs on this PC.</p>
+
+    <div class="authgrid grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label for="authUser" class="text-xs font-bold text-slate-300 block mb-1">Username</label>
+        <input id="authUser" autocomplete="username" class="w-full rounded-xl px-3 py-2 text-sm" placeholder="Enter username">
+      </div>
+      <div>
+        <label for="authPass" class="text-xs font-bold text-slate-300 block mb-1">Password / PIN</label>
+        <input id="authPass" type="password" autocomplete="current-password" class="w-full rounded-xl px-3 py-2 text-sm" placeholder="Enter password">
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3 mt-4">
+      <button class="btn btn-gradient-primary text-xs px-5 py-2.5 rounded-xl font-bold" id="loginBtn">Login</button>
+      <button class="btn btn-gradient-secondary text-xs px-5 py-2.5 rounded-xl font-bold" id="registerBtn">Create Local User</button>
+      <button class="btn btn-gradient-secondary text-xs px-5 py-2.5 rounded-xl font-bold text-rose-300" id="logoutBtn" hidden>Logout</button>
+    </div>
+
+    <div class="authstatus mt-3 text-xs font-semibold text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-3" id="authStatus" aria-live="polite">
+      Not logged in
+    </div>
+  </section>
+
+  <!-- HELP DESK -->
+  <section id="help" class="glass-panel rounded-2xl p-6 mb-8">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-headset text-emerald-400"></i> Help Desk
+        </h2>
+        <p class="hint text-xs text-slate-400">Need help with an ONU config? Call or message support.</p>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <a class="btn btn-gradient-primary text-xs px-4 py-2.5 rounded-xl font-bold flex items-center gap-2" href="tel:+8801719961987" target="_blank" rel="noopener">
+          <i class="fa-solid fa-phone"></i> Call +8801719961987
+        </a>
+        <a class="btn btn-gradient-cyan text-xs px-4 py-2.5 rounded-xl font-bold flex items-center gap-2" href="https://wa.me/8801719961987" target="_blank" rel="noopener">
+          <i class="fa-brands fa-whatsapp"></i> WhatsApp
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="text-center text-xs text-slate-500 py-4 border-t border-slate-800">
+    © 2026 Elias Hossen. All rights reserved.
+  </footer>
+
 </main>
+
+<!-- JS SCRIPT LOGIC -->
 <script>
 (function () {
   const T = {
@@ -119,13 +675,131 @@ a.btn{display:inline-block;text-decoration:none}
   const PH = { pon: "PON", index: "Index", vlan: "VLAN", sn: "SN", cid: "CID (optional)" };
   const ids = ["pon", "index", "vlan", "profile", "sn", "cid"];
   let mode = "V", kind = "S", rows = [];
+  
   function $(id) { return document.getElementById(id); }
+  
   function store(key, value) {
     try { if (value === null) localStorage.removeItem(key); else localStorage.setItem(key, value); } catch (e) {}
   }
+  
   function load(key) {
     try { return localStorage.getItem(key); } catch (e) { return null; }
   }
+  
+  function dayKey(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+  
+  function readCounts() { try { return JSON.parse(load("olt_config_counts") || '{"V":0,"C":0,"daily":{}}'); } catch (e) { return {V:0,C:0,daily:{}}; } }
+  
+  function updateCounts() { 
+    const c=readCounts(); 
+    $("countVsol").textContent=Number(c.V)||0; 
+    $("countCdata").textContent=Number(c.C)||0; 
+    $("countTotal").textContent=(Number(c.V)||0)+(Number(c.C)||0); 
+    const today=(c.daily||{})[dayKey()]||{V:0,C:0}; 
+    $("countToday").textContent=(Number(today.V)||0)+(Number(today.C)||0); 
+  }
+  
+  function readArray(key){try{const a=JSON.parse(load(key)||"[]");return Array.isArray(a)?a:[];}catch(e){return[];}}
+  function saveArray(key,a){store(key,JSON.stringify(a));}
+  
+  function recordCopiedConfig() {
+    const b=kind==="B"?build():null, amount=kind==="B"?(b?b.count:0):(($("out").textContent.trim() && !$("miss").textContent.trim())?1:0);
+    if(!amount)return;
+    const c=readCounts(); c[mode]=(Number(c[mode])||0)+amount; c.daily=c.daily||{}; c.daily[dayKey()]=c.daily[dayKey()]||{V:0,C:0}; c.daily[dayKey()][mode]=(Number(c.daily[dayKey()][mode])||0)+amount; store("olt_config_counts",JSON.stringify(c)); updateCounts();
+    const stamp=new Date().toLocaleString(); const user=load("olt_logged_user")||"Guest"; const onus=readArray("olt_onu_records");
+    if(kind==="B") { rows.forEach(r=>{if(validIndex(String(r.index||""))&&String(r.sn||"").trim()&&String(r.vlan||"").trim()) onus.unshift({date:stamp,mode:mode,pon:r.pon||"",index:r.index,vlan:r.vlan,sn:r.sn,user:user});}); }
+    else onus.unshift({date:stamp,mode:mode,pon:$("pon").value,index:$("index").value,vlan:$("vlan").value,sn:$("sn").value,user:user});
+    saveArray("olt_onu_records",onus.slice(0,1000)); renderOnus();
+  }
+  
+  function renderSaved(){
+    const box=$("savedList"),items=readArray("olt_saved_commands");
+    box.textContent="";
+    if(!items.length){box.textContent="No saved commands yet.";return;}
+    items.forEach((it,i)=>{
+      const d=document.createElement("div");
+      d.className="glass-card rounded-xl p-3 border border-slate-700/60 mb-2";
+      const title=document.createElement("strong");
+      title.className="text-slate-200 font-bold block mb-1";
+      title.textContent=it.name+" · "+it.mode+" · "+it.date;
+      const pre=document.createElement("pre");
+      pre.className="rounded-lg p-2.5 text-xs bg-slate-950 text-cyan-300 font-mono my-2 overflow-x-auto";
+      pre.textContent=it.text;
+      const loadBtn=document.createElement("button");
+      loadBtn.className="btn btn-gradient-secondary text-xs px-3 py-1.5 rounded-lg font-semibold mr-2";
+      loadBtn.textContent="Load to Commands";
+      loadBtn.onclick=()=>{$("out").textContent=it.text;$("miss").textContent="Loaded saved command. Verify before use.";window.location.hash="#config";};
+      const copyBtn=document.createElement("button");
+      copyBtn.className="btn btn-gradient-primary text-xs px-3 py-1.5 rounded-lg font-semibold mr-2";
+      copyBtn.textContent="Copy saved command";
+      copyBtn.onclick=async()=>{const ok=await copyTextToClipboard(it.text);copyBtn.textContent=ok?"Copied":"Copy failed";};
+      const del=document.createElement("button");
+      del.className="btn btn-gradient-secondary text-xs px-3 py-1.5 rounded-lg font-semibold text-rose-400";
+      del.textContent="Delete";
+      del.onclick=()=>{const a=readArray("olt_saved_commands");a.splice(i,1);saveArray("olt_saved_commands",a);renderSaved();};
+      const row=document.createElement("div");
+      row.className="flex flex-wrap gap-2 mt-2";
+      row.append(loadBtn,copyBtn,del);
+      d.append(title,pre,row);
+      box.appendChild(d);
+    });
+  }
+  
+  function renderOnus(){
+    const body=$("onuRows"),items=readArray("olt_onu_records");
+    body.textContent="";
+    if(!items.length){
+      const tr=document.createElement("tr"),td=document.createElement("td");
+      td.colSpan=7;td.textContent="No copied ONU records yet.";td.className="p-4 text-center text-slate-500";
+      tr.appendChild(td);body.appendChild(tr);return;
+    }
+    items.slice(0,200).forEach(o=>{
+      const tr=document.createElement("tr");
+      tr.className="hover:bg-slate-800/50 transition-colors";
+      [o.date,o.mode==="V"?"VSOL":"C-Data",o.pon||"—",o.index,o.vlan,o.sn,o.user].forEach((v, idx)=>{
+        const td=document.createElement("td");
+        td.textContent=v||"";
+        td.className="p-3 border-b border-slate-800/80 font-mono";
+        if (idx === 1) {
+          td.innerHTML = o.mode === "V" 
+            ? '<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-sans font-bold">VSOL</span>'
+            : '<span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-sans font-bold">C-Data</span>';
+        }
+        tr.appendChild(td);
+      });
+      body.appendChild(tr);
+    });
+  }
+  
+  function downloadFile(name,content,type){
+    const blob=new Blob([content],{type:type||"text/plain"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+    a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }
+  
+  function csvEscape(v){return '"'+String(v==null?"":v).replace(/"/g,'""')+'"';}
+  
+  function updateAuthUI() { 
+    const user=load("olt_logged_user"); 
+    $("authStatus").textContent=user ? "Logged in as: "+user : "Not logged in"; 
+    $("logoutBtn").hidden=!user; $("loginBtn").hidden=!!user; $("registerBtn").hidden=!!user; 
+  }
+  
+  function authKey(user) { return "olt_local_user_"+user.toLowerCase(); }
+  
+  function localAuth(action) { 
+    const user=$("authUser").value.trim(), pass=$("authPass").value; 
+    if(!/^[a-zA-Z0-9_.-]{3,32}$/.test(user)){ $("authStatus").textContent="Username must be 3–32 characters (letters, numbers, . _ -)."; return; } 
+    if(pass.length<4){ $("authStatus").textContent="Password/PIN must contain at least 4 characters."; return; } 
+    const key=authKey(user); 
+    if(action==="register"){ 
+      if(load(key)!==null){ $("authStatus").textContent="That local username already exists."; return; } 
+      store(key,pass); store("olt_logged_user",user); $("authPass").value=""; updateAuthUI(); $("authStatus").textContent="Local account created. Logged in as: "+user; 
+    } else { 
+      if(load(key)!==pass){ $("authStatus").textContent="Login failed. Check username/password or create a local user."; return; } 
+      store("olt_logged_user",user); $("authPass").value=""; updateAuthUI(); $("authStatus").textContent="Login successful. Welcome, "+user+"."; 
+    } 
+  }
+  
   function blank() { return { pon: "1", index: "", vlan: "", sn: "", cid: "" }; }
   function fill(t, v) {
     Object.keys(v).forEach(function (k) { t = t.split("{" + k + "}").join(v[k]); });
@@ -134,6 +808,9 @@ a.btn{display:inline-block;text-decoration:none}
   function dropCid(t, v) {
     return v.cid ? t : t.split("\n").filter(function (l) { return l.indexOf("{cid}") < 0; }).join("\n");
   }
+  function validPositiveInt(value) { return /^\d+$/.test(value) && Number(value) >= 1; }
+  function validIndex(value) { return /^\d+$/.test(value) && Number(value) >= 1 && Number(value) <= 128; }
+  
   function build() {
     const t = $("tpl").value, profile = $("profile").value.trim();
     const blocks = [], errs = [], seenI = {}, seenS = {};
@@ -142,20 +819,24 @@ a.btn{display:inline-block;text-decoration:none}
     rows.forEach(function (r, i) {
       const n = "Row " + (i + 1);
       const v = { pon: (r.pon || "").trim(), index: (r.index || "").trim(), vlan: (r.vlan || "").trim(), sn: (r.sn || "").trim(), cid: (r.cid || "").trim(), profile: profile };
-      if (!v.sn && !v.cid) { skipped++; return; }
+      if (!v.sn && !v.cid && !v.index && !v.vlan) { skipped++; return; }
       const miss = [];
       if (mode === "C" && !v.pon) miss.push("PON");
       if (!v.index) miss.push("Index");
       if (!v.vlan) miss.push("VLAN");
       if (!v.sn) miss.push("SN");
       if (miss.length) { errs.push(n + ": missing " + miss.join(", ")); return; }
-      if (!/^\d+$/.test(v.index)) { errs.push(n + ": Index must be a number"); return; }
+      if (!validIndex(v.index)) { errs.push(n + ": Index must be from 1 to 128"); return; }
+      if (mode === "C" && !validPositiveInt(v.pon)) { errs.push(n + ": PON must be a positive whole number"); return; }
       const ki = (mode === "C" ? v.pon : "") + "/" + v.index;
-      if (seenI[ki]) errs.push(n + ": duplicate index " + v.index + " (also row " + seenI[ki] + ")"); else seenI[ki] = i + 1;
+      if (seenI[ki]) errs.push(n + ": duplicate index " + v.index + " (also row " + seenI[ki] + ")");
+      else seenI[ki] = i + 1;
       const ks = v.sn.toLowerCase();
-      if (seenS[ks]) errs.push(n + ": duplicate SN (also row " + seenS[ks] + ")"); else seenS[ks] = i + 1;
+      if (seenS[ks]) errs.push(n + ": duplicate SN (also row " + seenS[ks] + ")");
+      else seenS[ks] = i + 1;
       blocks.push(fill(dropCid(t, v), v));
     });
+    if (errs.length) return { text: "", errs: errs, count: 0, skipped: skipped };
     const tails = [], shows = [];
     const body = blocks.map(function (b) {
       return b.split("\n").filter(function (l) {
@@ -168,11 +849,13 @@ a.btn{display:inline-block;text-decoration:none}
     const text = body.join("\n\n") + (blocks.length && tails.length ? "\n\n" + tails.join("\n") : "") + (shows.length ? "\n" + shows.join("\n") : "");
     return { text: text, errs: errs, count: blocks.length, skipped: skipped };
   }
+  
   function save() {
     ids.forEach(function (k) { if (k !== "profile" && $(k)) store("in_" + k, $(k).value); });
     store("in_rowsjson", JSON.stringify(rows));
     store("in_kind", kind);
   }
+  
   function render() {
     const tpl = $("tpl");
     if (!tpl) return;
@@ -181,21 +864,38 @@ a.btn{display:inline-block;text-decoration:none}
       const b = build();
       $("out").textContent = b.text;
       $("miss").textContent = b.errs.join(" | ");
-      $("rowhint").textContent = b.count + " ONU" + (b.count === 1 ? "" : "s") + " ready" + (b.skipped ? ", " + b.skipped + " empty row" + (b.skipped === 1 ? "" : "s") + " skipped" : "") + ".";
+      $("rowhint").textContent = b.errs.length ? "Fix validation errors before copying commands." :
+        b.count + " ONU" + (b.count === 1 ? "" : "s") + " ready" + (b.skipped ? ", " + b.skipped + " empty row" + (b.skipped === 1 ? "" : "s") + " skipped" : "") + ".";
       return;
     }
-    let text = tpl.value;
-    const missing = [];
+    const values = {};
     ids.forEach(function (k) {
       const el = $(k);
-      if (!el) return;
-      const raw = el.value.trim();
-      if (!raw && text.indexOf("{" + k + "}") > -1) missing.push(k);
+      if (el) {
+        values[k] = el.value.trim();
+        el.removeAttribute("aria-invalid");
+      }
+    });
+    const errors = [];
+    if (!values.profile) errors.push("Profile is required");
+    if (!validIndex(values.index || "")) { errors.push("Index must be from 1 to 128"); if ($("index")) $("index").setAttribute("aria-invalid", "true"); }
+    if (!values.vlan) { errors.push("VLAN is required"); if ($("vlan")) $("vlan").setAttribute("aria-invalid", "true"); }
+    if (!values.sn) { errors.push("SN is required"); if ($("sn")) $("sn").setAttribute("aria-invalid", "true"); }
+    if (mode === "C" && !validPositiveInt(values.pon || "")) { errors.push("PON must be a positive whole number"); if ($("pon")) $("pon").setAttribute("aria-invalid", "true"); }
+    if (errors.length) {
+      $("out").textContent = "";
+      $("miss").textContent = errors.join(" | ");
+      return;
+    }
+    let text = dropCid(tpl.value, values);
+    ids.forEach(function (k) {
+      const raw = values[k] || "";
       text = text.split("{" + k + "}").join(raw || "{" + k + "}");
     });
     $("out").textContent = text;
-    $("miss").textContent = missing.length ? "Empty: " + missing.join(", ") : "";
+    $("miss").textContent = "";
   }
+  
   function drawRows() {
     const g = $("grid");
     g.className = mode === "C" ? "" : "v";
@@ -208,6 +908,7 @@ a.btn{display:inline-block;text-decoration:none}
         inp.setAttribute("data-k", k);
         inp.placeholder = PH[k];
         inp.value = r[k] || "";
+        inp.className = "rounded-lg px-2.5 py-1.5 text-xs";
         inp.setAttribute("aria-label", PH[k] + ", row " + (i + 1));
         inp.setAttribute("autocomplete", "off");
         if (k !== "sn") inp.setAttribute("inputmode", "numeric");
@@ -223,6 +924,7 @@ a.btn{display:inline-block;text-decoration:none}
       g.appendChild(d);
     });
   }
+  
   function setMode(m) {
     mode = m;
     $("mV").setAttribute("aria-pressed", String(m === "V"));
@@ -230,11 +932,12 @@ a.btn{display:inline-block;text-decoration:none}
     $("gpon").className = m === "C" ? "" : "h";
     $("profile").value = P[m];
     $("tpl").value = load("tpl_" + m) || T[m];
-    $("phint").textContent = "One ONU per line. Columns: " + COLS[m].map(function (c) { return c === "sn" ? "SN" : c === "cid" ? "CID" : c === "vlan" ? "VLAN" : c === "pon" ? "PON" : c === "index" ? "Index" : "Profile"; }).join(", ") + ". The last column is optional.";
+    $("phint").textContent = "Columns: " + COLS[m].map(function (c) { return c === "sn" ? "SN" : c === "cid" ? "CID" : c === "vlan" ? "VLAN" : c === "pon" ? "PON" : c === "index" ? "Index" : "Profile"; }).join(", ") + ".";
     $("paste").placeholder = m === "V" ? "42\t22101\tHWTC9f40767a\t379038" : "2\t54\t3840\tHWTC62315150\t1\t374583";
     drawRows();
     render();
   }
+  
   function setKind(k) {
     kind = k;
     $("mS").setAttribute("aria-pressed", String(k === "S"));
@@ -244,6 +947,7 @@ a.btn{display:inline-block;text-decoration:none}
     $("batch").hidden = k !== "B";
     render();
   }
+  
   function importRows() {
     const cols = COLS[mode], need = cols.length - 1, added = [], errs = [];
     let prof = null;
@@ -256,7 +960,7 @@ a.btn{display:inline-block;text-decoration:none}
       if (p.length !== cols.length && p.length !== need) { errs.push("Line " + (i + 1) + ": expected " + need + " or " + cols.length + " columns, got " + p.length); return; }
       const v = {};
       cols.forEach(function (c, j) { v[c] = j < p.length ? p[j] : ""; });
-      if (!/^\d+$/.test(v.index)) { if (!added.length && !errs.length) return; errs.push("Line " + (i + 1) + ": Index must be a number"); return; }
+      if (!validIndex(v.index)) { if (!added.length && !errs.length) return; errs.push("Line " + (i + 1) + ": Index must be from 1 to 128"); return; }
       if (mode === "C" && v.profile) prof = v.profile;
       added.push({ pon: v.pon || $("pon").value || "1", index: v.index, vlan: v.vlan, sn: v.sn, cid: v.cid || "" });
     });
@@ -269,6 +973,7 @@ a.btn{display:inline-block;text-decoration:none}
     drawRows();
     render();
   }
+  
   async function copyTextToClipboard(text) {
     try {
       if (navigator.clipboard && window.isSecureContext) {
@@ -290,15 +995,46 @@ a.btn{display:inline-block;text-decoration:none}
     document.body.removeChild(ta);
     return ok;
   }
+  
   function init() {
     const tpl = $("tpl");
+    updateCounts(); updateAuthUI(); renderSaved(); renderOnus();
+    $("loginBtn").onclick = function(){ localAuth("login"); };
+    $("registerBtn").onclick = function(){ localAuth("register"); };
+    $("logoutBtn").onclick = function(){ store("olt_logged_user",null); updateAuthUI(); };
+    
+    $("saveCommand").onclick=function(){
+      const txt=$("out").textContent.trim();
+      if(!txt||$("miss").textContent.trim()){ $("miss").textContent="Generate a valid command before saving.";return;}
+      const name=prompt("Name this command set:",mode+" ONU config "+new Date().toLocaleString());
+      if(name===null||!name.trim())return;
+      const a=readArray("olt_saved_commands");
+      a.unshift({name:name.trim(),mode:mode,date:new Date().toLocaleString(),user:load("olt_logged_user")||"Guest",text:txt});
+      saveArray("olt_saved_commands",a.slice(0,300));renderSaved();
+    };
+    
+    $("clearSaved").onclick=function(){if(confirm("Delete all saved command sets in this browser?")){saveArray("olt_saved_commands",[]);renderSaved();}};
+    $("clearOnus").onclick=function(){if(confirm("Delete the local ONU work log?")){saveArray("olt_onu_records",[]);renderOnus();}};
+    
+    $("exportOnus").onclick=function(){
+      const a=readArray("olt_onu_records"),head=["Date/Time","OLT","PON","Index","VLAN","SN","User"],lines=[head.map(csvEscape).join(",")].concat(a.map(o=>[o.date,o.mode==="V"?"VSOL":"C-Data",o.pon,o.index,o.vlan,o.sn,o.user].map(csvEscape).join(",")));
+      downloadFile("onu-configured-list.csv",lines.join("\r\n"),"text/csv;charset=utf-8");
+    };
+    
+    $("exportData").onclick=function(){
+      const data={exportedAt:new Date().toISOString(),counts:readCounts(),savedCommands:readArray("olt_saved_commands"),onuRecords:readArray("olt_onu_records")};
+      downloadFile("olt-local-data.json",JSON.stringify(data,null,2),"application/json");
+    };
+    
     $("mV").onclick = function () { setMode("V"); };
     $("mC").onclick = function () { setMode("C"); };
     $("mS").onclick = function () { setKind("S"); };
     $("mB").onclick = function () { setKind("B"); };
+    
     ids.forEach(function (k) { const el = $(k); if (el) el.addEventListener("input", render); });
     tpl.addEventListener("input", function () { store("tpl_" + mode, tpl.value); render(); });
     $("rst").onclick = function () { store("tpl_" + mode, null); tpl.value = T[mode]; render(); };
+    
     $("next").onclick = function () {
       const n = parseInt($("index").value, 10);
       if (!isNaN(n)) $("index").value = String(n + 1);
@@ -307,6 +1043,7 @@ a.btn{display:inline-block;text-decoration:none}
       render();
       $("sn").focus();
     };
+    
     $("addrow").onclick = function () {
       const last = rows[rows.length - 1] || {};
       const n = parseInt(last.index, 10);
@@ -315,31 +1052,38 @@ a.btn{display:inline-block;text-decoration:none}
       render();
       try { const f = $("grid").querySelectorAll('[data-k="sn"]'); f[f.length - 1].focus(); } catch (e) {}
     };
+    
     $("clr").onclick = function () { rows = [blank()]; drawRows(); render(); };
     $("import").onclick = importRows;
+    
     $("copy").onclick = async function () {
       const copyBtn = $("copy");
       let ok = false;
       try { ok = await copyTextToClipboard($("out").textContent); } catch (err) { ok = false; }
-      copyBtn.textContent = ok ? "Copied" : "Copy failed";
+      copyBtn.innerHTML = ok ? '<i class="fa-solid fa-check"></i> Copied!' : '<i class="fa-solid fa-triangle-exclamation"></i> Copy failed';
+      if (ok) recordCopiedConfig();
       if (!ok) $("miss").textContent = "Copy blocked by browser. Select text and copy manually.";
       setTimeout(function () {
-        copyBtn.textContent = "Copy commands";
+        copyBtn.innerHTML = '<i class="fa-solid fa-copy"></i> Copy Commands';
         if (!ok) render();
       }, 1800);
     };
+    
     ["pon", "index", "vlan", "sn", "cid"].forEach(function (k) {
       const v = load("in_" + k);
       if (v !== null) $(k).value = v;
     });
+    
     try {
       const saved = JSON.parse(load("in_rowsjson") || "[]");
       if (Array.isArray(saved) && saved.length) rows = saved;
     } catch (e) {}
+    
     if (!rows.length) rows = [blank()];
     let nextFree = 0;
+    
     $("ffind").onclick = function () {
-      const max = parseInt($("fmax").value, 10) || 128;
+      const max = 128;
       const used = {};
       $("fin").value.split(/\r?\n/).forEach(function (line) {
         const m = line.match(/\d+\/\d+(?:\/\d+)?:(\d+)/) || line.match(/^\s*(\d+)(?=\s|$)/);
@@ -358,6 +1102,7 @@ a.btn{display:inline-block;text-decoration:none}
         (gaps.length ? "Free gaps below " + high + ": " + gaps.slice(0, 20).join(", ") + (gaps.length > 20 ? " ..." : "") + "\n" : "No gaps below " + high + ".\n") +
         (high < max ? "Next after highest: " + (high + 1) : "");
     };
+    
     $("fuse").onclick = function () {
       if (!nextFree) return;
       $("index").value = String(nextFree);
@@ -365,11 +1110,359 @@ a.btn{display:inline-block;text-decoration:none}
       if (r) { r.index = String(nextFree); drawRows(); }
       render();
     };
+    
     setMode("V");
     if (load("in_kind") === "B") setKind("B");
   }
+  
   document.addEventListener("DOMContentLoaded", init);
 })();
 </script>
+
+<script>
+/* Duplicate ONU Finder: finds an SN registered on 2+ PONs and builds delete commands for the inactive copy */
+(function () {
+  const $ = (id) => document.getElementById(id);
+  if (!$("dupGo")) return;
+
+  const BRAND = {
+    V: {
+      t1: "interface gpon {pon}", t2: "no onu {id}",
+      hint: "VSOL: lines like GPON0/6:3  V691  D401  sn  GPTF00eda14d. A model shown as unknown means the ONU is offline (inactive).",
+      example: [
+        "GPON0/6:5  unknown  D401  sn  OEMC04086f92",
+        "GPON0/6:40 unknown  D401  sn  VSOL009f4569",
+        "GPON0/7:12 unknown  D401  sn  VSOL009f4569",
+        "GPON0/6:41 unknown  D401  sn  GPTF00ff71e1",
+        "GPON0/7:71 V691     D401  sn  GPTF00ff71e1",
+        "GPON0/7:90 D401     D401  sn  VSOL009f41fd",
+        "GPON0/6:23 unknown  D401  sn  VSOL009f41fd"
+      ]
+    },
+    C: {
+      t1: "interface gpon {fs}", t2: "ont delete {port} {id}",
+      hint: "C-Data: lines like 0/0 1 5 SN Active Online. The state comes from the Online/Offline column, so the dying-gasp and LOS words are ignored.",
+      example: [
+        "  0/0 1  65     VSOL0060AE79     Active   Offline initial   initial   --",
+        "  0/0 3  44     VSOL0060AE79     Active   Online  success   match     --         CID-190462",
+        "  0/0 1  45     VSOL009F1D65     Active   Offline initial   initial   --",
+        "  0/0 3  42     VSOL009F1D65     Active   Online  success   match     --",
+        "  0/0 1  124    HWTC93F41A2E     Active   Offline initial   initial   --",
+        "  0/0 2  128    HWTC93F41A2E     Active   Offline initial   initial   dying-gasp"
+      ]
+    }
+  };
+  const VERDICT = { clean: "One active, rest inactive", allinactive: "All inactive, check by hand", multi: "More than one active, check by hand" };
+  const STATE = { active: "Active", inactive: "Inactive" };
+
+  let brand = "V", sel = new Set(), groups = [], pons = [];
+
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  function parseV(text) {
+    const out = [];
+    text.split(/\r?\n/).forEach((raw) => {
+      const m = raw.match(/GPON\s*(\d+\/\d+):(\d{1,3})(.*)$/i);
+      if (!m) return;
+      const s = m[3].match(/^\s*(.*?)\s*\b(\S+)\s+sn\s+(\S+)\s*$/i);
+      if (!s) return;
+      const model = s[1].trim() || "-";
+      out.push({ pon: m[1], id: +m[2], model, sn: s[3].toUpperCase(), state: model.toLowerCase() === "unknown" ? "inactive" : "active" });
+    });
+    return out;
+  }
+
+  function parseC(text) {
+    const out = [];
+    text.split(/\r?\n/).forEach((raw) => {
+      const q = raw.match(/^\s*(\d+)\/(\d+)\s+(\d+)\s+(\d+)\s+(\S+)\s+(\S+)\s+(Online|Offline)\b/i);
+      if (!q) return;
+      out.push({ pon: q[1] + "/" + q[2] + "/" + q[3], id: +q[4], model: "-", sn: q[5].toUpperCase(), state: q[7].toLowerCase() === "online" ? "active" : "inactive" });
+    });
+    return out;
+  }
+
+  function ponSort(a, b) {
+    const x = a.split("/").map(Number), y = b.split("/").map(Number);
+    for (let i = 0; i < Math.max(x.length, y.length); i++) {
+      const d = (x[i] || 0) - (y[i] || 0);
+      if (d) return d;
+    }
+    return 0;
+  }
+
+  function sub(tpl, pon, id) {
+    const a = pon.split("/");
+    return tpl.split("{pon}").join(pon).split("{fs}").join(a[0] + "/" + a[1]).split("{port}").join(a[2] || "").split("{id}").join(id);
+  }
+
+  function analyze() {
+    const list = brand === "C" ? parseC($("dupIn").value) : parseV($("dupIn").value);
+    const bySn = new Map();
+    list.forEach((o) => { if (!bySn.has(o.sn)) bySn.set(o.sn, []); bySn.get(o.sn).push(o); });
+    pons = Array.from(new Set(list.map((o) => o.pon))).sort(ponSort);
+    groups = []; sel = new Set();
+    bySn.forEach((items, sn) => {
+      if (items.length < 2) return;
+      const act = items.filter((o) => o.state === "active").length;
+      const v = act === 1 ? "clean" : act === 0 ? "allinactive" : "multi";
+      if (v === "clean") items.forEach((o) => { if (o.state === "inactive") sel.add(o.pon + ":" + o.id); });
+      groups.push({ sn, items, v });
+    });
+    render(list.length);
+  }
+
+  function render(total) {
+    const sum = $("dupSum"), res = $("dupRes");
+    if (!total) {
+      sum.textContent = "No ONU lines found. " + BRAND[brand].hint;
+      res.innerHTML = ""; $("dupCmd").hidden = true;
+      return;
+    }
+    const clean = groups.filter((g) => g.v === "clean").length;
+    sum.textContent = total + " ONUs read, " + groups.length + " duplicate SN" + (groups.length === 1 ? "" : "s") + ", " + clean + " ready to clean";
+    let h = "";
+    groups.forEach((g) => {
+      h += '<div class="dup-grp"><div class="dup-gh"><span class="font-mono font-bold text-white text-sm">' + esc(g.sn) + '</span><span class="dup-tag dup-' + g.v + '">' + VERDICT[g.v] + '</span></div><div class="overflow-x-auto"><table class="dup-tbl">';
+      g.items.forEach((o) => {
+        const k = o.pon + ":" + o.id, can = o.state === "inactive";
+        h += "<tr><td style=\"width:34px\">" + (can ? '<input type="checkbox" class="dup-chk" data-k="' + k + '"' + (sel.has(k) ? " checked" : "") + ' aria-label="Delete ' + esc(k) + '">' : "") + "</td>" +
+          '<td class="font-mono">PON ' + esc(o.pon) + " · ONU " + o.id + "</td><td>" + esc(o.model) + '</td><td><span class="dup-tag dup-' + o.state + '">' + STATE[o.state] + "</span></td></tr>";
+      });
+      h += "</table></div></div>";
+    });
+    if (!groups.length) h = '<p class="text-xs text-slate-400">No duplicate serial numbers found.</p>';
+    res.innerHTML = h;
+    res.querySelectorAll("input[data-k]").forEach((c) => {
+      c.addEventListener("change", () => { if (c.checked) sel.add(c.dataset.k); else sel.delete(c.dataset.k); commands(); });
+    });
+    commands();
+  }
+
+  function commands() {
+    const box = $("dupCmd");
+    if (!groups.length) { box.hidden = true; return; }
+    box.hidden = false;
+    const byPon = {};
+    sel.forEach((k) => { const p = k.split(":"); (byPon[p[0]] = byPon[p[0]] || []).push(+p[1]); });
+    const t1 = $("dupT1").value, t2 = $("dupT2").value, t3 = $("dupT3").value, all = [];
+    let h = "";
+    pons.forEach((p, n) => {
+      const ids = (byPon[p] || []).sort((a, b) => a - b), lines = [];
+      if (ids.length) {
+        lines.push(sub(t1, p, 0));
+        ids.forEach((i) => lines.push(sub(t2, p, i)));
+        lines.push(t3);
+        all.push(lines.join("\n"));
+      }
+      h += '<div class="mb-4"><div class="text-xs font-bold text-slate-300 mb-1">PON ' + esc(p) + ' <span class="text-slate-500 font-normal">(' + ids.length + ' to delete)</span></div>' +
+        '<textarea readonly spellcheck="false" class="dup-out w-full rounded-xl p-2.5 text-xs" data-n="' + n + '" placeholder="Nothing to delete on this PON.">' + esc(lines.join("\n")) + "</textarea>" +
+        '<button class="btn btn-gradient-secondary text-xs px-3 py-1.5 rounded-xl font-bold" data-c="' + n + '">Copy PON ' + esc(p) + "</button></div>";
+    });
+    $("dupOuts").innerHTML = h;
+    $("dupOuts").dataset.all = all.join("\n");
+  }
+
+  function flash(text) {
+    const m = $("dupMsg");
+    m.textContent = text;
+    setTimeout(() => { m.textContent = ""; }, 2500);
+  }
+
+  function copyFrom(el) {
+    if (!el.value) { flash("Nothing to copy"); return; }
+    const fallback = () => {
+      el.select();
+      let ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) {}
+      flash(ok ? "Copied" : "Select the text and copy it manually");
+    };
+    try { navigator.clipboard.writeText(el.value).then(() => flash("Copied"), fallback); } catch (e) { fallback(); }
+  }
+
+  function setBrand(b) {
+    brand = b;
+    $("dupV").setAttribute("aria-pressed", String(b === "V"));
+    $("dupC").setAttribute("aria-pressed", String(b === "C"));
+    $("dupT1").value = BRAND[b].t1;
+    $("dupT2").value = BRAND[b].t2;
+    $("dupT3").value = "exit";
+    $("dupIn").placeholder = BRAND[b].example[1] ? BRAND[b].example[1].trim() : "";
+    $("dupHint").textContent = BRAND[b].hint;
+    commands();
+  }
+
+  $("dupV").addEventListener("click", () => setBrand("V"));
+  $("dupC").addEventListener("click", () => setBrand("C"));
+  $("dupGo").addEventListener("click", analyze);
+  ["dupT1", "dupT2", "dupT3"].forEach((id) => $(id).addEventListener("input", commands));
+  $("dupEx").addEventListener("click", () => { $("dupIn").value = BRAND[brand].example.join("\n"); analyze(); });
+  $("dupClr").addEventListener("click", () => {
+    $("dupIn").value = ""; groups = []; sel = new Set(); pons = [];
+    $("dupRes").innerHTML = ""; $("dupCmd").hidden = true;
+    $("dupSum").textContent = "Paste the ONU list, then press Find Duplicates.";
+  });
+  $("dupCopyAll").addEventListener("click", () => {
+    const buf = $("dupBuf");
+    buf.value = $("dupOuts").dataset.all || "";
+    copyFrom(buf);
+  });
+  $("dupOuts").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-c]");
+    if (!b) return;
+    copyFrom($("dupOuts").querySelector('textarea[data-n="' + b.dataset.c + '"]'));
+  });
+
+  setBrand("V");
+})();
+</script>
+
+
+<script>
+/* ===== Firebase (optional) =====
+   Fill FIREBASE_CONFIG to switch on cloud login and cloud sync of saved presets, the ONU work log, counts and templates.
+   Leave it empty and the site keeps working exactly as before, with the local login.
+
+   Setup:
+   1. Firebase console > create a project > add a Web app > copy its config values below.
+   2. Authentication > Sign-in method > enable Email/Password.
+   3. Authentication > Settings > Authorized domains > add your github.io domain.
+   4. Firestore Database > create database > Rules, then publish:
+        rules_version = '2';
+        service cloud.firestore {
+          match /databases/{database}/documents {
+            match /users/{uid} {
+              allow read, write: if request.auth != null && request.auth.uid == uid;
+            }
+          }
+        }
+*/
+(function () {
+  const FIREBASE_CONFIG = {
+    apiKey: "",
+    authDomain: "",
+    projectId: "",
+    appId: ""
+  };
+  if (!FIREBASE_CONFIG.apiKey || !FIREBASE_CONFIG.projectId) return;
+
+  const SDK = "https://www.gstatic.com/firebasejs/10.14.1/";
+  const SYNC_KEYS = ["olt_saved_commands", "olt_onu_records", "olt_config_counts", "tpl_V", "tpl_C"];
+  const $ = (id) => document.getElementById(id);
+  const say = (t) => { const s = $("authStatus"); if (s) s.textContent = t; };
+  const MSG = {
+    "auth/invalid-credential": "Wrong email or password.",
+    "auth/invalid-email": "Enter a valid email address.",
+    "auth/email-already-in-use": "That email already has an account. Use Login.",
+    "auth/weak-password": "Password must be at least 6 characters.",
+    "auth/too-many-requests": "Too many attempts. Try again later.",
+    "auth/network-request-failed": "No internet connection."
+  };
+
+  function parseArr(s) { try { const a = JSON.parse(s || "[]"); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+  function mergeArr(local, cloud, cap) {
+    const seen = new Set(), out = [];
+    local.concat(cloud).forEach((x) => { const k = JSON.stringify(x); if (!seen.has(k)) { seen.add(k); out.push(x); } });
+    return cap ? out.slice(0, cap) : out;
+  }
+  function mergeCounts(l, c) {
+    try {
+      const a = JSON.parse(l || "{}"), b = JSON.parse(c || "{}"), da = a.daily || {}, db = b.daily || {}, daily = {};
+      Object.keys(da).concat(Object.keys(db)).forEach((k) => {
+        daily[k] = { V: Math.max(Number((da[k] || {}).V) || 0, Number((db[k] || {}).V) || 0), C: Math.max(Number((da[k] || {}).C) || 0, Number((db[k] || {}).C) || 0) };
+      });
+      return JSON.stringify({ V: Math.max(Number(a.V) || 0, Number(b.V) || 0), C: Math.max(Number(a.C) || 0, Number(b.C) || 0), daily });
+    } catch (e) { return l || c; }
+  }
+
+  // Registered after the site's own init, so these handlers replace the local-login ones.
+  document.addEventListener("DOMContentLoaded", async function () {
+    let A, F, auth, db;
+    try {
+      const m = await Promise.all([import(SDK + "firebase-app.js"), import(SDK + "firebase-auth.js"), import(SDK + "firebase-firestore.js")]);
+      const app = m[0].initializeApp(FIREBASE_CONFIG);
+      A = m[1]; F = m[2]; auth = A.getAuth(app); db = F.getFirestore(app);
+    } catch (e) { say("Cloud login could not load. The local login still works."); return; }
+
+    const lab = document.querySelector('label[for="authUser"]');
+    if (lab) lab.textContent = "Email";
+    $("authUser").placeholder = "Enter email";
+    $("authUser").type = "email";
+    $("authUser").autocomplete = "email";
+    $("authPass").placeholder = "Password (6+ characters)";
+    $("registerBtn").textContent = "Create Account";
+
+    let user = null, last = "";
+    const snap = () => {
+      const o = {};
+      SYNC_KEYS.forEach((k) => { try { const v = localStorage.getItem(k); if (v !== null) o[k] = v; } catch (e) {} });
+      return o;
+    };
+    async function push(force) {
+      if (!user) return false;
+      const data = snap(), txt = JSON.stringify(data);
+      if (!force && txt === last) return true;
+      try { await F.setDoc(F.doc(db, "users", user.uid), { data: data, updatedAt: F.serverTimestamp() }); last = txt; return true; }
+      catch (e) { return false; }
+    }
+    async function pull() {
+      let cloud = {};
+      try { const s = await F.getDoc(F.doc(db, "users", user.uid)); if (s.exists()) cloud = (s.data() || {}).data || {}; }
+      catch (e) { say("Logged in, but cloud data could not be read. Check the Firestore rules."); return; }
+      const local = snap(), merged = {};
+      merged.olt_saved_commands = JSON.stringify(mergeArr(parseArr(local.olt_saved_commands), parseArr(cloud.olt_saved_commands)));
+      merged.olt_onu_records = JSON.stringify(mergeArr(parseArr(local.olt_onu_records), parseArr(cloud.olt_onu_records), 1000));
+      if (local.olt_config_counts !== undefined || cloud.olt_config_counts !== undefined) merged.olt_config_counts = mergeCounts(local.olt_config_counts, cloud.olt_config_counts);
+      ["tpl_V", "tpl_C"].forEach((k) => { const v = local[k] !== undefined ? local[k] : cloud[k]; if (v !== undefined) merged[k] = v; });
+      let changed = false;
+      Object.keys(merged).forEach((k) => { if (merged[k] !== local[k]) { changed = true; try { localStorage.setItem(k, merged[k]); } catch (e) {} } });
+      await push(true);
+      if (changed && Date.now() - Number(sessionStorage.getItem("fb_reload") || 0) > 20000) {
+        sessionStorage.setItem("fb_reload", String(Date.now()));
+        location.reload();
+      }
+    }
+
+    async function run(kind) {
+      const email = $("authUser").value.trim(), pass = $("authPass").value;
+      if (!email || !pass) { say("Enter email and password."); return; }
+      say("Please wait...");
+      try {
+        if (kind === "register") await A.createUserWithEmailAndPassword(auth, email, pass);
+        else await A.signInWithEmailAndPassword(auth, email, pass);
+        $("authPass").value = "";
+      } catch (e) { say(MSG[e.code] || "Sign-in failed (" + (e.code || "error") + ")."); }
+    }
+    $("loginBtn").onclick = () => run("login");
+    $("registerBtn").onclick = () => run("register");
+    $("logoutBtn").onclick = async function () {
+      if (user) {
+        if (!(await push(true))) { say("Could not save to the cloud, so you were not logged out. Check the connection and try again."); return; }
+        SYNC_KEYS.forEach((k) => { try { localStorage.removeItem(k); } catch (e) {} });
+      }
+      await A.signOut(auth);
+      location.reload();
+    };
+
+    A.onAuthStateChanged(auth, async function (u) {
+      user = u;
+      if (!u) {
+        try { localStorage.removeItem("olt_logged_user"); } catch (e) {}
+        say("Not logged in");
+        $("logoutBtn").hidden = true; $("loginBtn").hidden = false; $("registerBtn").hidden = false;
+        return;
+      }
+      try { localStorage.setItem("olt_logged_user", u.email); } catch (e) {}
+      $("logoutBtn").hidden = false; $("loginBtn").hidden = true; $("registerBtn").hidden = true;
+      say("Logged in as: " + u.email + " (cloud sync on)");
+      await pull();
+    });
+
+    setInterval(() => { push(false); }, 4000);
+    document.addEventListener("visibilitychange", () => { if (document.hidden) push(false); });
+  });
+})();
+</script>
+
 </body>
 </html>
