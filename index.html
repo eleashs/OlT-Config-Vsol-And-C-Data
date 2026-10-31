@@ -607,32 +607,20 @@ pre#out {
   </section>
 
   <!-- LOCAL USER AUTHENTICATION -->
-  <section id="account" class="glass-panel rounded-2xl p-6 mb-8">
-    <h2 class="text-lg font-bold text-white flex items-center gap-2 mb-1">
-      <i class="fa-solid fa-user-lock text-indigo-400"></i> User Login Session
-    </h2>
-    <p class="hint text-xs text-slate-400 mb-4">Browser-local user registration for tagging operator logs on this PC.</p>
-
-    <div class="authgrid grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <div>
-        <label for="authUser" class="text-xs font-bold text-slate-300 block mb-1">Username</label>
-        <input id="authUser" autocomplete="username" class="w-full rounded-xl px-3 py-2 text-sm" placeholder="Enter username">
-      </div>
-      <div>
-        <label for="authPass" class="text-xs font-bold text-slate-300 block mb-1">Password / PIN</label>
-        <input id="authPass" type="password" autocomplete="current-password" class="w-full rounded-xl px-3 py-2 text-sm" placeholder="Enter password">
-      </div>
+  <section id="account" class="glass-panel rounded-2xl px-4 py-3 mb-8" title="Login tags the operator name in the ONU Work Log">
+    <div class="flex flex-wrap items-center gap-2">
+      <h2 class="text-sm font-bold text-white flex items-center gap-2 mr-1">
+        <i class="fa-solid fa-user-lock text-indigo-400"></i> Login
+      </h2>
+      <label for="authUser" class="sr-only">Username</label>
+      <input id="authUser" autocomplete="username" class="flex-1 min-w-[130px] rounded-lg px-2.5 py-1.5 text-xs" placeholder="Username">
+      <label for="authPass" class="sr-only">Password / PIN</label>
+      <input id="authPass" type="password" autocomplete="current-password" class="flex-1 min-w-[130px] rounded-lg px-2.5 py-1.5 text-xs" placeholder="Password / PIN">
+      <button class="btn btn-gradient-primary text-xs px-3.5 py-1.5 rounded-lg font-bold" id="loginBtn">Login</button>
+      <button class="btn btn-gradient-secondary text-xs px-3.5 py-1.5 rounded-lg font-bold" id="registerBtn">Create User</button>
+      <button class="btn btn-gradient-secondary text-xs px-3.5 py-1.5 rounded-lg font-bold text-rose-300" id="logoutBtn" hidden>Logout</button>
     </div>
-
-    <div class="flex flex-wrap items-center gap-3 mt-4">
-      <button class="btn btn-gradient-primary text-xs px-5 py-2.5 rounded-xl font-bold" id="loginBtn">Login</button>
-      <button class="btn btn-gradient-secondary text-xs px-5 py-2.5 rounded-xl font-bold" id="registerBtn">Create Local User</button>
-      <button class="btn btn-gradient-secondary text-xs px-5 py-2.5 rounded-xl font-bold text-rose-300" id="logoutBtn" hidden>Logout</button>
-    </div>
-
-    <div class="authstatus mt-3 text-xs font-semibold text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-3" id="authStatus" aria-live="polite">
-      Not logged in
-    </div>
+    <div class="authstatus mt-2 text-xs font-semibold text-indigo-300" id="authStatus" aria-live="polite">Not logged in</div>
   </section>
 
   <!-- HELP DESK -->
@@ -1339,10 +1327,10 @@ pre#out {
 */
 (function () {
   const FIREBASE_CONFIG = {
-    apiKey: "",
-    authDomain: "",
-    projectId: "",
-    appId: ""
+    apiKey: "AIzaSyABsleg94UYy6m0OzNsCvgNuLvpWsXAOE8",
+    authDomain: "onu-configure-manager.firebaseapp.com",
+    projectId: "onu-configure-manager",
+    appId: "1:431628823549:web:f1f301c3823189317d0794"
   };
   if (!FIREBASE_CONFIG.apiKey || !FIREBASE_CONFIG.projectId) return;
 
