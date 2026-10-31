@@ -1,44 +1,74 @@
-# ONU Config Generator
+# ONU Config Generator (VSOL and C-Data GPON)
 
-A free, single-page web tool that generates ONU provisioning commands for GPON OLTs. Enter the ONU details, copy the commands, and paste them into the OLT CLI.
+A free browser tool for making ONU configuration commands for **VSOL** and **C-Data** GPON OLTs, and for cleaning up duplicate ONUs.
 
-**Live site:** https://eleashs.github.io/OlT-Config-Vsol-And-C-Data/
+Live site: https://eleashs.github.io/OlT-Config-Vsol-And-C-Data/
 
-## Supported OLTs
+## What it does
 
-- VSOL GPON
-- C-Data GPON
+- **Config Generator**: builds the ONU config commands for VSOL or C-Data. Use *Single ONU* for one ONU or *Batch Mode* for many at once.
+- **Index Finder**: finds free ONU index numbers (1 to 128).
+- **Duplicate Finder**: finds an ONU serial number (SN) that is registered on more than one PON, and prepares delete commands for the inactive copy.
+- **Saved Presets** and **ONU Work Log**: keep your commands and records, with CSV export.
+- **Login**: tags the operator name in the work log. It can use Firebase so your data follows you across devices.
+- **Colour themes**: pick a theme with the dots at the bottom right of the page.
 
-## How to use
+## Duplicate Finder
 
-1. Choose the OLT type (VSOL GPON or C-Data GPON).
-2. **Single:** fill in Index, VLAN, SN and CID. For C-Data, also enter the PON.
-3. **Batch:** add one row per ONU (or paste rows from Excel under "Paste from Excel"). Use **Add row** to continue with the next index.
-4. Click **Copy commands** and paste them into the OLT CLI.
-5. Use **Index finder** to paste the OLT's ONU list and find the next free index.
+1. Choose the OLT brand (VSOL or C-Data).
+2. Paste the ONU list from the OLT. All PONs can be pasted together.
+3. Press **Find Duplicates**.
 
-## Features
+How the active copy is chosen:
 
-- Command templates for VSOL and C-Data GPON
-- Single mode and Batch mode with one input row per ONU
-- Excel paste import (tab, comma or space separated)
-- One `write` / `save` at the end of a batch
-- Warnings for empty fields, non-numeric index, and duplicate index or SN
-- Index finder for the next free ONU index
-- Editable command templates, saved in your browser
-- One-click copy, works on phones and desktops, light and dark mode
-- No backend and no login. Everything runs in your browser, and no data is sent anywhere.
+| OLT | How state is read |
+|---|---|
+| VSOL | A model shown as `unknown` is treated as offline (inactive). A known model is active. |
+| C-Data | The Online / Offline column is used. |
 
-## Notes
+Delete commands are built only when one copy is active and the others are inactive. If every copy is inactive, or more than one is active, you decide by hand. You get one command box per PON, plus a CSV list of what will be deleted.
 
-- The templates follow the commands used on our OLTs. CLI syntax can differ between OLT models and firmware, so test on one ONU before regular use.
-- On VSOL, enter the correct PON interface in the CLI before pasting the commands.
-- Inputs and edited templates are stored in the browser's local storage. Clearing browser data removes them, so keep a copy of your edited templates. Use **Clear all rows** when you finish on a shared device.
+Command formats:
 
-## Run locally
+```
+VSOL                        C-Data
+interface gpon 0/2          interface gpon 0/0
+no onu 5                    ont delete 1 5
+exit                        exit
+```
 
-Download `index.html` and open it in a browser. For the copy button to work reliably, serve it over HTTPS (GitHub Pages) or localhost.
+Always check the commands against your own OLT before running them, and save the OLT configuration afterwards.
 
-## Author
+## Run it
 
-© 2026 Elias Hossen. All rights reserved.
+It is a single `index.html` file. Open it in a browser, or publish it with GitHub Pages.
+
+## Optional: Firebase login and cloud sync
+
+Without Firebase the site works fully offline with a local login. To turn on cloud login:
+
+1. Create a Firebase project and add a **Web app**.
+2. Enable **Authentication > Email/Password**.
+3. Add your `github.io` domain under **Authentication > Settings > Authorized domains**.
+4. Create a **Firestore** database and publish these rules:
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}
+```
+
+5. Put your config values (`apiKey`, `authDomain`, `projectId`, `appId`) into `FIREBASE_CONFIG` near the bottom of `index.html`.
+
+A Firebase web config is not a secret. Your data is protected by the rules above, so each user can only read and write their own document.
+
+## Privacy
+
+The generators and the Duplicate Finder run in your browser and send nothing anywhere. Saved presets and the work log are kept in your browser. If you log in with Firebase, they are also stored in your own user document.
+
+Copyright 2026 Elias Hossen. All rights reserved.
