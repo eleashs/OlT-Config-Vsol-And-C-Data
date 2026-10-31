@@ -204,8 +204,26 @@ pre#out {
 .dup-tbl { width: 100%; min-width: 420px; border-collapse: collapse; font-size: 0.75rem; }
 .dup-tbl td { padding: 7px 14px; border-top: 1px solid rgba(255, 255, 255, 0.06); color: #cbd5e1; }
 .dup-tbl tr:first-child td { border-top: 0; }
+.dup-use { background: rgba(148,163,184,.12); color: #cbd5e1; border: 1px solid rgba(148,163,184,.28); }
 .dup-chk { width: 16px; height: 16px; accent-color: #6366f1; }
 .dup-out { font-family: 'JetBrains Mono', monospace; height: 110px; margin-bottom: 6px; background: #030712 !important; color: #38bdf8 !important; border: 1px solid rgba(56, 189, 248, 0.25) !important; }
+/* Colour themes (pick with the dots at the bottom right; default is the original indigo) */
+html[data-theme="ocean"]   { --c1: 14,165,233; --c2: 59,130,246; --c3: 6,182,212;  --lt: #38bdf8; }
+html[data-theme="emerald"] { --c1: 16,185,129; --c2: 20,184,166; --c3: 34,197,94;  --lt: #34d399; }
+html[data-theme="neon"]    { --c1: 6,182,212;  --c2: 99,102,241; --c3: 16,185,129; --lt: #22d3ee; }
+html[data-theme="neon"] body { background-color: #0b0f19; }
+html[data-theme="sunset"]  { --c1: 244,63,94;  --c2: 249,115,22; --c3: 245,158,11; --lt: #fb7185; }
+html[data-theme] body { background-image: radial-gradient(at 0% 0%, rgba(var(--c1), 0.22) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(var(--c2), 0.2) 0px, transparent 50%), radial-gradient(at 50% 100%, rgba(var(--c3), 0.15) 0px, transparent 50%); }
+html[data-theme] .btn-gradient-primary { background: linear-gradient(135deg, rgb(var(--c1)) 0%, rgb(var(--c2)) 100%); box-shadow: 0 4px 15px -3px rgba(var(--c1), 0.4); }
+html[data-theme] .btn-gradient-primary:hover { filter: brightness(0.9); }
+html[data-theme] .seg-btn[aria-pressed="true"] { background: linear-gradient(135deg, rgb(var(--c1)), rgb(var(--c2))); }
+html[data-theme] .glass-panel:hover { border-color: rgba(var(--c1), 0.35); box-shadow: 0 14px 35px -10px rgba(var(--c1), 0.2); }
+html[data-theme] input:focus, html[data-theme] textarea:focus, html[data-theme] select:focus { border-color: rgb(var(--c1)) !important; box-shadow: 0 0 0 3px rgba(var(--c1), 0.3) !important; }
+html[data-theme] .text-indigo-300, html[data-theme] .text-indigo-400 { color: var(--lt); }
+html[data-theme] .dup-chk { accent-color: rgb(var(--c1)); }
+.theme-bar { position: fixed; right: 14px; bottom: 14px; z-index: 50; display: flex; gap: 8px; padding: 8px 10px; border-radius: 9999px; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.14); backdrop-filter: blur(8px); }
+.theme-dot { width: 22px; height: 22px; border-radius: 9999px; border: 2px solid transparent; cursor: pointer; padding: 0; }
+.theme-dot[aria-pressed="true"] { border-color: #fff; }
 </style>
 </head>
 
@@ -341,35 +359,38 @@ pre#out {
 
         <!-- Single ONU Form Fields -->
         <div class="f grid grid-cols-1 sm:grid-cols-2 gap-3" id="single">
-          <div id="gpon" class="h">
-            <label for="pon" class="text-xs font-bold text-slate-300 mb-1 block">PON Port</label>
-            <input id="pon" value="1" inputmode="numeric" class="w-full rounded-xl px-3 py-2 text-sm" placeholder="e.g. 1">
-          </div>
-          <div>
-            <label for="index" class="text-xs font-bold text-slate-300 mb-1 block">Index (1–128)</label>
-            <input id="index" inputmode="numeric" class="w-full rounded-xl px-3 py-2 text-sm" placeholder="e.g. 25">
-          </div>
-          <div>
-            <label for="vlan" class="text-xs font-bold text-slate-300 mb-1 block">VLAN ID</label>
-            <input id="vlan" inputmode="numeric" class="w-full rounded-xl px-3 py-2 text-sm" placeholder="e.g. 2210">
-          </div>
-          <div class="sm:col-span-2">
+          <div class="sm:col-span-2 flex flex-wrap gap-3" id="snrow">
+          <div class="flex-1 min-w-[200px]">
             <label for="sn" class="text-xs font-bold text-slate-300 mb-1 block">Serial Number (SN)</label>
-            <input id="sn" class="w-full rounded-xl px-3 py-2 text-sm font-mono uppercase" placeholder="HWTC9f40767a" autocomplete="off" autocapitalize="off">
+            <input id="sn" class="w-full rounded-xl px-3 py-2 text-sm font-mono uppercase" placeholder="Input SN" autocomplete="off" autocapitalize="off">
           </div>
-          <div class="sm:col-span-2">
-            <label for="cid" class="text-xs font-bold text-slate-300 mb-1 block">Customer ID / Description (Optional)</label>
-            <input id="cid" inputmode="numeric" class="w-full rounded-xl px-3 py-2 text-sm" placeholder="e.g. 379038" autocomplete="off">
+          <div id="profbox" class="w-44">
+            <label for="profile" id="profLabel" class="text-xs font-bold text-slate-300 mb-1 block">Profile Name / ID</label>
+            <input id="profile" class="w-full rounded-xl px-3 py-2 text-sm font-semibold" autocapitalize="characters" placeholder="e.g. D401 or 1">
+          </div>
+          </div>
+          <div class="sm:col-span-2 flex flex-wrap gap-3" id="numrow">
+            <div id="gpon" hidden class="w-28">
+              <label for="pon" class="text-xs font-bold text-slate-300 mb-1 block">PON Port (1–8)</label>
+              <input id="pon" value="1" inputmode="numeric" class="w-full rounded-xl px-3 py-2 text-sm" placeholder="1 to 8" maxlength="1">
+            </div>
+            <div class="w-28">
+              <label for="index" class="text-xs font-bold text-slate-300 mb-1 block">Index (1–128)</label>
+              <input id="index" inputmode="numeric" class="w-full rounded-xl px-3 py-2 text-sm" placeholder="Input Index" maxlength="3">
+            </div>
+            <div class="w-32">
+              <label for="vlan" class="text-xs font-bold text-slate-300 mb-1 block">VLAN ID</label>
+              <input id="vlan" inputmode="numeric" class="w-full rounded-xl px-3 py-2 text-sm" placeholder="Input VLAN">
+            </div>
+            <div class="flex-1 min-w-[150px]">
+              <label for="cid" class="text-xs font-bold text-slate-300 mb-1 block">Customer ID (Optional)</label>
+              <input id="cid" inputmode="numeric" class="w-full rounded-xl px-3 py-2 text-sm" placeholder="Input CID" autocomplete="off">
+            </div>
           </div>
         </div>
 
-        <!-- Profile Input -->
-        <div class="f grid grid-cols-1 gap-3 mt-3" id="common">
-          <div>
-            <label for="profile" class="text-xs font-bold text-slate-300 mb-1 block">Profile Name / ID (All ONUs)</label>
-            <input id="profile" class="w-full rounded-xl px-3 py-2 text-sm font-semibold" autocapitalize="characters" placeholder="e.g. D401 or 1">
-          </div>
-        </div>
+        <!-- Profile Input (shown here only in Batch Mode, otherwise it sits in the SN row) -->
+        <div class="f grid grid-cols-1 gap-3 mt-3" id="common" hidden></div>
 
         <div class="row mt-4" id="nextrow">
           <button class="btn btn-gradient-secondary w-full py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2" id="next">
@@ -586,11 +607,18 @@ pre#out {
     </div>
 
     <div id="dupSum" class="text-sm font-semibold text-slate-300 mt-5" aria-live="polite">Paste the ONU list, then press Find Duplicates.</div>
+    <div id="dupUse" class="flex flex-wrap gap-2 mt-3"></div>
     <div id="dupRes" class="mt-3"></div>
 
     <div id="dupCmd" hidden class="mt-5">
       <h3 class="text-sm font-bold text-white mb-1 flex items-center gap-2"><i class="fa-solid fa-terminal text-cyan-400"></i> Delete commands</h3>
       <p class="hint text-xs text-slate-400 mb-3">One box per PON. Only ticked inactive ONUs are included. Check the command format against your OLT before running it, and save the OLT configuration afterwards.</p>
+      <p id="dupCount" class="text-sm font-semibold text-amber-300 mb-2" aria-live="polite"></p>
+      <div class="flex flex-wrap gap-2 mb-3">
+        <button class="btn btn-gradient-secondary px-3 py-1.5 rounded-xl text-xs font-bold" id="dupSelAll">Select recommended</button>
+        <button class="btn btn-gradient-secondary px-3 py-1.5 rounded-xl text-xs font-bold" id="dupSelNone">Clear all</button>
+        <button class="btn btn-gradient-secondary px-3 py-1.5 rounded-xl text-xs font-bold" id="dupCsv"><i class="fa-solid fa-file-csv"></i> Download list (CSV)</button>
+      </div>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
         <div><label for="dupT1" class="text-xs text-slate-400 block mb-1">Enter PON</label><input id="dupT1" class="w-full rounded-xl px-3 py-2 text-xs font-mono"></div>
         <div><label for="dupT2" class="text-xs text-slate-400 block mb-1">Delete ONU</label><input id="dupT2" class="w-full rounded-xl px-3 py-2 text-xs font-mono"></div>
@@ -797,6 +825,7 @@ pre#out {
     return v.cid ? t : t.split("\n").filter(function (l) { return l.indexOf("{cid}") < 0; }).join("\n");
   }
   function validPositiveInt(value) { return /^\d+$/.test(value) && Number(value) >= 1; }
+  function validPon(value) { return /^\d+$/.test(value) && Number(value) >= 1 && Number(value) <= 8; }
   function validIndex(value) { return /^\d+$/.test(value) && Number(value) >= 1 && Number(value) <= 128; }
   
   function build() {
@@ -815,7 +844,7 @@ pre#out {
       if (!v.sn) miss.push("SN");
       if (miss.length) { errs.push(n + ": missing " + miss.join(", ")); return; }
       if (!validIndex(v.index)) { errs.push(n + ": Index must be from 1 to 128"); return; }
-      if (mode === "C" && !validPositiveInt(v.pon)) { errs.push(n + ": PON must be a positive whole number"); return; }
+      if (mode === "C" && !validPon(v.pon)) { errs.push(n + ": PON must be from 1 to 8"); return; }
       const ki = (mode === "C" ? v.pon : "") + "/" + v.index;
       if (seenI[ki]) errs.push(n + ": duplicate index " + v.index + " (also row " + seenI[ki] + ")");
       else seenI[ki] = i + 1;
@@ -869,7 +898,7 @@ pre#out {
     if (!validIndex(values.index || "")) { errors.push("Index must be from 1 to 128"); if ($("index")) $("index").setAttribute("aria-invalid", "true"); }
     if (!values.vlan) { errors.push("VLAN is required"); if ($("vlan")) $("vlan").setAttribute("aria-invalid", "true"); }
     if (!values.sn) { errors.push("SN is required"); if ($("sn")) $("sn").setAttribute("aria-invalid", "true"); }
-    if (mode === "C" && !validPositiveInt(values.pon || "")) { errors.push("PON must be a positive whole number"); if ($("pon")) $("pon").setAttribute("aria-invalid", "true"); }
+    if (mode === "C" && !validPon(values.pon || "")) { errors.push("PON must be from 1 to 8"); if ($("pon")) $("pon").setAttribute("aria-invalid", "true"); }
     if (errors.length) {
       $("out").textContent = "";
       $("miss").textContent = errors.join(" | ");
@@ -917,7 +946,7 @@ pre#out {
     mode = m;
     $("mV").setAttribute("aria-pressed", String(m === "V"));
     $("mC").setAttribute("aria-pressed", String(m === "C"));
-    $("gpon").className = m === "C" ? "" : "h";
+    $("gpon").hidden = m !== "C";
     $("profile").value = P[m];
     $("tpl").value = load("tpl_" + m) || T[m];
     $("phint").textContent = "Columns: " + COLS[m].map(function (c) { return c === "sn" ? "SN" : c === "cid" ? "CID" : c === "vlan" ? "VLAN" : c === "pon" ? "PON" : c === "index" ? "Index" : "Profile"; }).join(", ") + ".";
@@ -1143,7 +1172,7 @@ pre#out {
   const VERDICT = { clean: "One active, rest inactive", allinactive: "All inactive, check by hand", multi: "More than one active, check by hand" };
   const STATE = { active: "Active", inactive: "Inactive" };
 
-  let brand = "V", sel = new Set(), groups = [], pons = [];
+  let brand = "V", sel = new Set(), groups = [], pons = [], counts = {};
 
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
@@ -1189,6 +1218,8 @@ pre#out {
     const bySn = new Map();
     list.forEach((o) => { if (!bySn.has(o.sn)) bySn.set(o.sn, []); bySn.get(o.sn).push(o); });
     pons = Array.from(new Set(list.map((o) => o.pon))).sort(ponSort);
+    counts = {};
+    list.forEach((o) => { counts[o.pon] = (counts[o.pon] || 0) + 1; });
     groups = []; sel = new Set();
     bySn.forEach((items, sn) => {
       if (items.length < 2) return;
@@ -1227,10 +1258,21 @@ pre#out {
     commands();
   }
 
+  function usage() {
+    const del = {};
+    sel.forEach((k) => { const p = k.split(":")[0]; del[p] = (del[p] || 0) + 1; });
+    $("dupUse").innerHTML = pons.map((p) => {
+      const u = counts[p] || 0, d = del[p] || 0;
+      return '<span class="dup-tag dup-use">PON ' + esc(p) + ": " + u + "/128 used, " + (128 - u) + " free" + (d ? " (+" + d + " after delete)" : "") + "</span>";
+    }).join("");
+  }
+
   function commands() {
+    usage();
     const box = $("dupCmd");
     if (!groups.length) { box.hidden = true; return; }
     box.hidden = false;
+    $("dupCount").textContent = sel.size + " ONU" + (sel.size === 1 ? "" : "s") + " will be deleted";
     const byPon = {};
     sel.forEach((k) => { const p = k.split(":"); (byPon[p[0]] = byPon[p[0]] || []).push(+p[1]); });
     const t1 = $("dupT1").value, t2 = $("dupT2").value, t3 = $("dupT3").value, all = [];
@@ -1286,7 +1328,7 @@ pre#out {
   ["dupT1", "dupT2", "dupT3"].forEach((id) => $(id).addEventListener("input", commands));
   $("dupEx").addEventListener("click", () => { $("dupIn").value = BRAND[brand].example.join("\n"); analyze(); });
   $("dupClr").addEventListener("click", () => {
-    $("dupIn").value = ""; groups = []; sel = new Set(); pons = [];
+    $("dupIn").value = ""; groups = []; sel = new Set(); pons = []; $("dupUse").innerHTML = "";
     $("dupRes").innerHTML = ""; $("dupCmd").hidden = true;
     $("dupSum").textContent = "Paste the ONU list, then press Find Duplicates.";
   });
@@ -1299,6 +1341,28 @@ pre#out {
     const b = e.target.closest("button[data-c]");
     if (!b) return;
     copyFrom($("dupOuts").querySelector('textarea[data-n="' + b.dataset.c + '"]'));
+  });
+
+  function syncChecks() {
+    document.querySelectorAll("#dupRes input[data-k]").forEach((c) => { c.checked = sel.has(c.dataset.k); });
+    commands();
+  }
+  $("dupSelAll").addEventListener("click", () => {
+    sel = new Set();
+    groups.forEach((g) => { if (g.v === "clean") g.items.forEach((o) => { if (o.state === "inactive") sel.add(o.pon + ":" + o.id); }); });
+    syncChecks();
+  });
+  $("dupSelNone").addEventListener("click", () => { sel = new Set(); syncChecks(); });
+  $("dupCsv").addEventListener("click", () => {
+    const rows = [["PON", "ONU index", "SN", "Model"]];
+    groups.forEach((g) => g.items.forEach((o) => { if (sel.has(o.pon + ":" + o.id)) rows.push([o.pon, o.id, g.sn, o.model]); }));
+    if (rows.length < 2) { flash("Nothing selected"); return; }
+    const csv = rows.map((r) => r.map((v) => '"' + String(v).replace(/"/g, '""') + '"').join(",")).join("\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    a.download = "duplicate-onu-delete-list.csv";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   });
 
   setBrand("V");
@@ -1449,6 +1513,50 @@ pre#out {
     setInterval(() => { push(false); }, 4000);
     document.addEventListener("visibilitychange", () => { if (document.hidden) push(false); });
   });
+})();
+</script>
+
+
+
+<script>
+/* Profile sits beside SN and CID in Single mode, and moves below the batch table area in Batch mode */
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const single = $("single"), common = $("common"), row = $("snrow"), box = $("profbox"), label = $("profLabel");
+  if (!single || !common || !row || !box) return;
+  function place() {
+    const batch = single.hidden;
+    (batch ? common : row).appendChild(box);
+    common.hidden = !batch;
+    label.textContent = batch ? "Profile Name / ID (All ONUs)" : "Profile Name / ID";
+  }
+  new MutationObserver(place).observe(single, { attributes: true, attributeFilter: ["hidden"] });
+  place();
+})();
+</script>
+
+
+<div class="theme-bar" role="group" aria-label="Colour theme">
+  <button class="theme-dot" data-t="indigo" aria-label="Indigo theme" title="Indigo" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)"></button>
+  <button class="theme-dot" data-t="ocean" aria-label="Ocean theme" title="Ocean" style="background:linear-gradient(135deg,#0ea5e9,#3b82f6)"></button>
+  <button class="theme-dot" data-t="emerald" aria-label="Emerald theme" title="Emerald" style="background:linear-gradient(135deg,#10b981,#14b8a6)"></button>
+  <button class="theme-dot" data-t="neon" aria-label="Neon theme" title="Neon" style="background:linear-gradient(135deg,#06b6d4,#6366f1)"></button>
+  <button class="theme-dot" data-t="sunset" aria-label="Sunset theme" title="Sunset" style="background:linear-gradient(135deg,#f43f5e,#f97316)"></button>
+</div>
+<script>
+/* Remember the chosen colour theme in this browser */
+(function () {
+  const KEY = "olt_theme", root = document.documentElement, dots = document.querySelectorAll(".theme-dot");
+  const OK = ["indigo", "ocean", "emerald", "neon", "sunset"];
+  function apply(t) {
+    if (t === "indigo") root.removeAttribute("data-theme"); else root.setAttribute("data-theme", t);
+    dots.forEach((d) => d.setAttribute("aria-pressed", String(d.dataset.t === t)));
+    try { localStorage.setItem(KEY, t); } catch (e) {}
+  }
+  dots.forEach((d) => d.addEventListener("click", () => apply(d.dataset.t)));
+  let saved = "indigo";
+  try { saved = localStorage.getItem(KEY) || "indigo"; } catch (e) {}
+  apply(OK.indexOf(saved) >= 0 ? saved : "indigo");
 })();
 </script>
 
