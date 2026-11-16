@@ -243,10 +243,10 @@ html[data-theme] .dup-chk { accent-color: rgb(var(--c1)); }
         <div class="brandtitle text-xl font-extrabold whitespace-nowrap bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent flex items-center gap-2">
           ONU Config Manager
         </div>
-        <div class="text-xs text-slate-400 font-medium flex items-center gap-2 whitespace-nowrap">
-          <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          VSOL &amp; C-Data GPON OLT Automated Suite
-        </div>
+        <button id="admLogo" type="button" title="Admin login" aria-label="Admin login" class="relative w-8 h-8 rounded-full bg-slate-800/80 hover:bg-slate-700/80 border border-slate-600/60 text-amber-400 flex items-center justify-center transition-all">
+          <i class="fa-solid fa-user-shield text-sm"></i>
+          <span id="admDot" class="hidden absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border border-slate-900"></span>
+        </button>
       </div>
     </div>
 
@@ -262,12 +262,45 @@ html[data-theme] .dup-chk { accent-color: rgb(var(--c1)); }
         <a href="#onuList" class="menu-item px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-700/70 transition-colors flex items-center gap-2.5"><i class="fa-solid fa-list-check text-emerald-400 w-4 text-center"></i> ONU Work Log</a>
         <a href="#finder" class="menu-item px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-700/70 transition-colors flex items-center gap-2.5"><i class="fa-solid fa-magnifying-glass text-purple-400 w-4 text-center"></i> Index Finder</a>
         <a href="#dupfinder" class="menu-item px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-700/70 transition-colors flex items-center gap-2.5"><i class="fa-solid fa-clone text-rose-400 w-4 text-center"></i> Duplicate Finder</a>
+        <a href="#adminPanel" id="adminMenuLink" hidden class="menu-item px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-700/70 transition-colors flex items-center gap-2.5"><i class="fa-solid fa-user-shield text-amber-400 w-4 text-center"></i> Admin Panel</a>
       </nav>
     </div>
   </header>
 
   <!-- STATS DASHBOARD -->
   <section id="dashboard" class="glass-panel rounded-xl px-3 py-2.5 mb-6">
+    <div id="account" class="mb-2 pb-2 border-b border-white/10">
+      <div id="authBar" class="hidden">
+        <div class="flex items-center gap-2.5">
+          <span class="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 via-purple-500 to-cyan-400 flex items-center justify-center text-white text-sm shrink-0"><i class="fa-solid fa-user"></i></span>
+          <span id="authName" class="text-sm font-bold text-white truncate min-w-0"></span>
+          <span id="authRole" class="hidden text-[10px] font-bold text-amber-300 bg-amber-400/10 border border-amber-400/30 rounded-full px-2 py-0.5 whitespace-nowrap"><i class="fa-solid fa-user-shield"></i> Admin</span>
+          <button class="btn btn-gradient-secondary text-xs px-3 py-1 rounded-lg font-bold text-rose-300 ml-auto shrink-0" id="logoutBtn" hidden>Logout</button>
+        </div>
+      </div>
+      <div id="authForm">
+        <div class="flex flex-wrap items-center gap-2">
+          <i class="fa-solid fa-user-lock text-indigo-400 text-sm" title="Login"></i>
+          <label for="authUser" class="sr-only">Email or mobile number</label>
+          <input id="authUser" autocomplete="username" class="flex-1 min-w-[130px] rounded-lg px-2.5 py-1.5 text-xs" placeholder="Email or mobile number">
+          <label for="authPass" class="sr-only">Password</label>
+          <input id="authPass" type="password" autocomplete="current-password" class="flex-1 min-w-[130px] rounded-lg px-2.5 py-1.5 text-xs" placeholder="Password">
+          <button class="btn btn-gradient-primary text-xs px-3.5 py-1.5 rounded-lg font-bold" id="loginBtn">Login</button>
+          <button class="btn btn-gradient-secondary text-xs px-3.5 py-1.5 rounded-lg font-bold" id="registerBtn">Create Account</button>
+          <button type="button" class="text-xs font-semibold text-indigo-300 hover:text-white underline underline-offset-2 px-1" id="forgotBtn" hidden>Forgot password?</button>
+        </div>
+        <div class="authstatus mt-1.5 text-xs font-semibold text-indigo-300" id="authStatus" aria-live="polite">Not logged in</div>
+        <div id="otpBox" class="hidden mt-2 flex flex-wrap items-center gap-2">
+          <label for="otpCode" class="sr-only">SMS code</label>
+          <input id="otpCode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" class="flex-1 min-w-[130px] rounded-lg px-2.5 py-1.5 text-xs" placeholder="6-digit SMS code">
+          <label for="newPass" class="sr-only">New password</label>
+          <input id="newPass" type="password" autocomplete="new-password" class="hidden flex-1 min-w-[130px] rounded-lg px-2.5 py-1.5 text-xs" placeholder="New password (6+ characters)">
+          <button type="button" class="btn btn-gradient-primary text-xs px-3.5 py-1.5 rounded-lg font-bold" id="otpOk">Confirm</button>
+          <button type="button" class="btn btn-gradient-secondary text-xs px-3.5 py-1.5 rounded-lg font-bold" id="otpCancel">Cancel</button>
+        </div>
+        <div id="recaptchaBox"></div>
+      </div>
+    </div>
     <div class="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4">
       <h2 class="text-sm font-bold text-white flex items-center gap-2 whitespace-nowrap">
         <i class="fa-solid fa-gauge-high text-indigo-400"></i> Configuration Dashboard
@@ -296,6 +329,16 @@ html[data-theme] .dup-chk { accent-color: rgb(var(--c1)); }
       </div>
     </div>
   </section>
+<script>
+/* Dashboard account bar: logged in = icon + name, logged out = login form */
+window.setAuthView = function (name, admin) {
+  var on = !!name, $ = function (id) { return document.getElementById(id); };
+  $("authForm").classList.toggle("hidden", on);
+  $("authBar").classList.toggle("hidden", !on);
+  $("authName").textContent = name || ""; $("authName").title = name || "";
+  $("authRole").classList.toggle("hidden", !(on && admin));
+};
+</script>
 
   <!-- MAIN CONFIGURATION GRID -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8" id="config">
@@ -610,21 +653,57 @@ html[data-theme] .dup-chk { accent-color: rgb(var(--c1)); }
     </div>
   </section>
 
-  <!-- LOCAL USER AUTHENTICATION -->
-  <section id="account" class="glass-panel rounded-2xl px-4 py-3 mb-8" title="Login tags the operator name in the ONU Work Log">
-    <div class="flex flex-wrap items-center gap-2">
-      <h2 class="text-sm font-bold text-white flex items-center gap-2 mr-1">
-        <i class="fa-solid fa-user-lock text-indigo-400"></i> Login
-      </h2>
-      <label for="authUser" class="sr-only">Username</label>
-      <input id="authUser" autocomplete="username" class="flex-1 min-w-[130px] rounded-lg px-2.5 py-1.5 text-xs" placeholder="Username">
-      <label for="authPass" class="sr-only">Password / PIN</label>
-      <input id="authPass" type="password" autocomplete="current-password" class="flex-1 min-w-[130px] rounded-lg px-2.5 py-1.5 text-xs" placeholder="Password / PIN">
-      <button class="btn btn-gradient-primary text-xs px-3.5 py-1.5 rounded-lg font-bold" id="loginBtn">Login</button>
-      <button class="btn btn-gradient-secondary text-xs px-3.5 py-1.5 rounded-lg font-bold" id="registerBtn">Create User</button>
-      <button class="btn btn-gradient-secondary text-xs px-3.5 py-1.5 rounded-lg font-bold text-rose-300" id="logoutBtn" hidden>Logout</button>
+  <!-- ADMIN PANEL (visible only to admin emails) -->
+  <section id="adminPanel" class="glass-panel rounded-2xl p-6 mb-8" hidden>
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+      <div>
+        <h2 class="text-lg font-bold text-white flex items-center gap-2"><i class="fa-solid fa-user-shield text-amber-400"></i> Admin Panel
+          <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-300 ml-1"><span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span id="admLive">Connecting...</span></span>
+        </h2>
+        <p class="hint text-xs text-slate-400">Sob user-er kaj live dekha jay. User login kore kaj korle data auto sync hoy.</p>
+      </div>
+      <div class="flex gap-2">
+        <button id="admExport" type="button" class="btn btn-gradient-secondary text-xs px-3.5 py-2 rounded-xl font-bold flex items-center gap-1.5"><i class="fa-solid fa-file-csv text-emerald-400"></i> Export (CSV)</button>
+      </div>
     </div>
-    <div class="authstatus mt-2 text-xs font-semibold text-indigo-300" id="authStatus" aria-live="polite">Not logged in</div>
+    <div id="admErr" class="hidden mb-3 text-xs font-semibold text-rose-300"></div>
+
+    <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-5">
+      <div class="glass-card rounded-xl p-3"><div class="text-[11px] text-slate-400 font-semibold uppercase">Users</div><div id="admUsers" class="text-xl font-extrabold text-white">0</div></div>
+      <div class="glass-card rounded-xl p-3"><div class="text-[11px] text-slate-400 font-semibold uppercase">Today</div><div id="admToday" class="text-xl font-extrabold text-amber-300">0</div></div>
+      <div class="glass-card rounded-xl p-3"><div class="text-[11px] text-slate-400 font-semibold uppercase">Total ONU</div><div id="admTotal" class="text-xl font-extrabold text-emerald-300">0</div></div>
+      <div class="glass-card rounded-xl p-3"><div class="text-[11px] text-slate-400 font-semibold uppercase">VSOL</div><div id="admV" class="text-xl font-extrabold text-indigo-300">0</div></div>
+      <div class="glass-card rounded-xl p-3"><div class="text-[11px] text-slate-400 font-semibold uppercase">C-Data</div><div id="admC" class="text-xl font-extrabold text-cyan-300">0</div></div>
+    </div>
+
+    <h3 class="text-sm font-bold text-white mb-2">Users</h3>
+    <div class="overflow-x-auto rounded-xl border border-slate-700/60 bg-slate-900/60 mb-6">
+      <table class="w-full text-left text-xs text-slate-300">
+        <thead class="bg-slate-800/80 text-slate-200 font-bold uppercase tracking-wider text-[11px] border-b border-slate-700">
+          <tr><th class="p-3">User</th><th class="p-3">Today</th><th class="p-3">VSOL</th><th class="p-3">C-Data</th><th class="p-3">Log</th><th class="p-3">Presets</th><th class="p-3">Last sync</th><th class="p-3"></th></tr>
+        </thead>
+        <tbody id="admUserRows" class="divide-y divide-slate-800"><tr><td colspan="8" class="p-4 text-center text-slate-500">Loading...</td></tr></tbody>
+      </table>
+    </div>
+
+    <h3 class="text-sm font-bold text-white mb-2">All work log</h3>
+    <div class="flex flex-wrap gap-2 mb-3">
+      <select id="admFUser" class="rounded-lg px-2.5 py-1.5 text-xs flex-1 min-w-[150px]"><option value="">All users</option></select>
+      <select id="admFOlt" class="rounded-lg px-2.5 py-1.5 text-xs"><option value="">All OLT</option><option value="V">VSOL</option><option value="C">C-Data</option></select>
+      <input id="admFText" class="rounded-lg px-2.5 py-1.5 text-xs flex-1 min-w-[150px]" placeholder="Search SN / index / VLAN / date">
+    </div>
+    <div class="overflow-x-auto rounded-xl border border-slate-700/60 bg-slate-900/60">
+      <table class="w-full text-left text-xs text-slate-300">
+        <thead class="bg-slate-800/80 text-slate-200 font-bold uppercase tracking-wider text-[11px] border-b border-slate-700">
+          <tr><th class="p-3">Date / Time</th><th class="p-3">User</th><th class="p-3">OLT</th><th class="p-3">PON</th><th class="p-3">Index</th><th class="p-3">VLAN</th><th class="p-3">SN</th></tr>
+        </thead>
+        <tbody id="admLogRows" class="divide-y divide-slate-800"></tbody>
+      </table>
+    </div>
+    <div class="mt-3 flex items-center justify-between text-xs text-slate-400">
+      <span id="admLogInfo"></span>
+      <button id="admMore" type="button" class="btn btn-gradient-secondary text-xs px-4 py-2 rounded-xl font-bold" hidden>Show more</button>
+    </div>
   </section>
 
   <!-- HELP DESK -->
@@ -783,6 +862,7 @@ html[data-theme] .dup-chk { accent-color: rgb(var(--c1)); }
     const user=load("olt_logged_user"); 
     $("authStatus").textContent=user ? "Logged in as: "+user : "Not logged in"; 
     $("logoutBtn").hidden=!user; $("loginBtn").hidden=!!user; $("registerBtn").hidden=!!user; 
+    if(window.setAuthView) window.setAuthView(user||null,false);
   }
   
   function authKey(user) { return "olt_local_user_"+user.toLowerCase(); }
@@ -1365,12 +1445,16 @@ html[data-theme] .dup-chk { accent-color: rgb(var(--c1)); }
    1. Firebase console > create a project > add a Web app > copy its config values below.
    2. Authentication > Sign-in method > enable Email/Password.
    3. Authentication > Settings > Authorized domains > add your github.io domain.
+      Mobile-number accounts and "Forgot password" by SMS: also enable the Phone sign-in method, and allow Bangladesh (+880)
+      under Authentication > Settings > SMS region policy. Firebase may require the Blaze (pay-as-you-go) plan for real SMS.
    4. Firestore Database > create database > Rules, then publish:
         rules_version = '2';
         service cloud.firestore {
           match /databases/{database}/documents {
             match /users/{uid} {
               allow read, write: if request.auth != null && request.auth.uid == uid;
+              // Admin: read-only access to every user's data (put the same email(s) as ADMIN_EMAILS)
+              allow read: if request.auth != null && request.auth.token.email in ["eleahs.molla@gmail.com"];
             }
           }
         }
@@ -1385,6 +1469,8 @@ html[data-theme] .dup-chk { accent-color: rgb(var(--c1)); }
   if (!FIREBASE_CONFIG.apiKey || !FIREBASE_CONFIG.projectId) return;
 
   const SDK = "https://www.gstatic.com/firebasejs/10.14.1/";
+  // Admin accounts: can see every user's work. Must ALSO be allowed in the Firestore rules (see setup step 4).
+  const ADMIN_EMAILS = ["eleahs.molla@gmail.com"];
   const SYNC_KEYS = ["olt_saved_commands", "olt_onu_records", "olt_config_counts", "tpl_V", "tpl_C"];
   const $ = (id) => document.getElementById(id);
   const say = (t) => { const s = $("authStatus"); if (s) s.textContent = t; };
@@ -1394,8 +1480,34 @@ html[data-theme] .dup-chk { accent-color: rgb(var(--c1)); }
     "auth/email-already-in-use": "That email already has an account. Use Login.",
     "auth/weak-password": "Password must be at least 6 characters.",
     "auth/too-many-requests": "Too many attempts. Try again later.",
-    "auth/network-request-failed": "No internet connection."
+    "auth/network-request-failed": "No internet connection.",
+    "auth/invalid-phone-number": "Mobile number is not valid.",
+    "auth/invalid-verification-code": "Wrong SMS code.",
+    "auth/code-expired": "SMS code expired. Request a new one.",
+    "auth/quota-exceeded": "SMS limit reached. Try again later.",
+    "auth/captcha-check-failed": "Security check failed. Reload the page and try again.",
+    "auth/operation-not-allowed": "This sign-in method is not enabled in Firebase.",
+    "auth/missing-phone-number": "Enter a mobile number.",
+    "auth/requires-recent-login": "Please try again.",
+    "auth/user-disabled": "This account is disabled."
   };
+  // Mobile numbers: 11 digits, first 3 digits must be one of these (add "018" here to allow Robi)
+  const MOBILE_PREFIXES = ["013", "014", "015", "016", "017", "019"];
+  const synthEmail = (mobile) => mobile + "@mobile.onu-config.invalid";
+  const loginIdOf = (u) => { const e = (u && u.email) || ""; return /@mobile\.onu-config\.invalid$/.test(e) ? e.split("@")[0] : e; };
+  // Anything with "@" is an email; anything else must be a valid mobile number
+  function parseId(raw) {
+    const v = String(raw || "").trim();
+    if (!v) return { err: "Enter your email or mobile number." };
+    if (v.indexOf("@") >= 0) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? { type: "email", email: v.toLowerCase() } : { err: "Enter a valid email address." };
+    }
+    let n = v.replace(/[\s-]/g, "");
+    if (/^\+880\d{10}$/.test(n)) n = "0" + n.slice(4); else if (/^880\d{10}$/.test(n)) n = "0" + n.slice(3);
+    if (!/^\d{11}$/.test(n) || MOBILE_PREFIXES.indexOf(n.slice(0, 3)) < 0)
+      return { err: "Mobile number must be 11 digits and start with " + MOBILE_PREFIXES.join("/") + "." };
+    return { type: "mobile", mobile: n, email: synthEmail(n) };
+  }
 
   function parseArr(s) { try { const a = JSON.parse(s || "[]"); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
   function mergeArr(local, cloud, cap) {
@@ -1415,20 +1527,33 @@ html[data-theme] .dup-chk { accent-color: rgb(var(--c1)); }
 
   // Registered after the site's own init, so these handlers replace the local-login ones.
   document.addEventListener("DOMContentLoaded", async function () {
-    let A, F, auth, db;
-    try {
-      const m = await Promise.all([import(SDK + "firebase-app.js"), import(SDK + "firebase-auth.js"), import(SDK + "firebase-firestore.js")]);
-      const app = m[0].initializeApp(FIREBASE_CONFIG);
-      A = m[1]; F = m[2]; auth = A.getAuth(app); db = F.getFirestore(app);
-    } catch (e) { say("Cloud login could not load. The local login still works."); return; }
+    // Admin logo: jumps to the Login box (one login for admin and users)
+    $("admLogo").onclick = () => { const a = $("account"); a.scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(() => $("authUser").focus(), 400); };
 
-    const lab = document.querySelector('label[for="authUser"]');
-    if (lab) lab.textContent = "Email";
-    $("authUser").placeholder = "Enter email";
-    $("authUser").type = "email";
-    $("authUser").autocomplete = "email";
+    let A, F, auth, db;
+    // Try Google's CDN first, then jsDelivr as a backup (some networks block gstatic.com)
+    const JSD = "https://cdn.jsdelivr.net/npm/firebase@10.14.1/";
+    const SOURCES = [
+      [SDK + "firebase-app.js", SDK + "firebase-auth.js", SDK + "firebase-firestore.js"],
+      [JSD + "app/+esm", JSD + "auth/+esm", JSD + "firestore/+esm"]
+    ];
+    let loaded = false;
+    for (let k = 0; k < SOURCES.length && !loaded; k++) {
+      try {
+        const m = await Promise.all(SOURCES[k].map((u) => import(u)));
+        const app = m[0].initializeApp(FIREBASE_CONFIG);
+        A = m[1]; F = m[2]; auth = A.getAuth(app); db = F.getFirestore(app);
+        loaded = true;
+      } catch (e) { console.error("Cloud login: source " + (k + 1) + " failed", e); }
+    }
+    if (!loaded) { say("Cloud login is not available (Firebase is blocked or no internet). Using local login."); return; }
+
+    $("authUser").placeholder = "Email or mobile (01XXXXXXXXX)";
+    $("authUser").type = "text";
+    $("authUser").autocomplete = "username";
     $("authPass").placeholder = "Password (6+ characters)";
     $("registerBtn").textContent = "Create Account";
+    $("forgotBtn").hidden = false;
 
     let user = null, last = "";
     const snap = () => {
@@ -1440,7 +1565,7 @@ html[data-theme] .dup-chk { accent-color: rgb(var(--c1)); }
       if (!user) return false;
       const data = snap(), txt = JSON.stringify(data);
       if (!force && txt === last) return true;
-      try { await F.setDoc(F.doc(db, "users", user.uid), { data: data, updatedAt: F.serverTimestamp() }); last = txt; return true; }
+      try { await F.setDoc(F.doc(db, "users", user.uid), { email: user.email || "", loginId: loginIdOf(user), data: data, updatedAt: F.serverTimestamp() }); last = txt; return true; }
       catch (e) { return false; }
     }
     async function pull() {
@@ -1461,18 +1586,80 @@ html[data-theme] .dup-chk { accent-color: rgb(var(--c1)); }
       }
     }
 
+    let authBusy = false, verifier = null, confirmation = null, pending = null;
+    function showOtp(on, mode) {
+      $("otpBox").classList.toggle("hidden", !on);
+      $("newPass").classList.toggle("hidden", mode !== "reset");
+      if (on) { $("otpCode").value = ""; $("newPass").value = ""; $("otpCode").focus(); }
+    }
+    function dropVerifier() { if (verifier) { try { verifier.clear(); } catch (e) {} verifier = null; } }
+    async function sendOtp(mobile, mode, pass) {
+      say("Sending SMS code...");
+      try {
+        dropVerifier();
+        verifier = new A.RecaptchaVerifier(auth, "recaptchaBox", { size: "invisible" });
+        confirmation = await A.signInWithPhoneNumber(auth, "+88" + mobile, verifier);
+        pending = { mode: mode, mobile: mobile, pass: pass };
+        showOtp(true, mode);
+        say("SMS code sent to " + mobile + ". Enter it below.");
+      } catch (e) { dropVerifier(); say(MSG[e.code] || "Could not send SMS (" + (e.code || "error") + ")."); }
+    }
+    async function confirmOtp() {
+      if (!confirmation || !pending) return;
+      const code = $("otpCode").value.trim(), np = $("newPass").value;
+      if (!/^\d{6}$/.test(code)) { say("Enter the 6-digit SMS code."); return; }
+      if (pending.mode === "reset" && np.length < 6) { say(MSG["auth/weak-password"]); return; }
+      authBusy = true; say("Please wait...");
+      try {
+        const pu = (await confirmation.confirm(code)).user;
+        if (pending.mode === "register") {
+          if (pu.email) { await A.signOut(auth); say("This number is already registered. Use Login or Forgot password."); }
+          else {
+            await A.linkWithCredential(pu, A.EmailAuthProvider.credential(synthEmail(pending.mobile), pending.pass));
+            say("Account created.");
+          }
+        } else {
+          if (pu.email !== synthEmail(pending.mobile)) {
+            try { await A.deleteUser(pu); } catch (e) { await A.signOut(auth); }
+            say("No account found for this mobile number.");
+          } else { await A.updatePassword(pu, np); say("Password changed. You are logged in."); }
+        }
+        showOtp(false); pending = null; confirmation = null; dropVerifier();
+        $("authPass").value = "";
+      } catch (e) { say(MSG[e.code] || "Failed (" + (e.code || "error") + ")."); }
+      authBusy = false;
+      if (auth.currentUser) await onUser(auth.currentUser); else await onUser(null);
+    }
+    $("otpOk").onclick = confirmOtp;
+    $("otpCode").addEventListener("keydown", (e) => { if (e.key === "Enter") confirmOtp(); });
+    $("otpCancel").onclick = () => { showOtp(false); pending = null; confirmation = null; dropVerifier(); say("Cancelled."); };
+
     async function run(kind) {
-      const email = $("authUser").value.trim(), pass = $("authPass").value;
-      if (!email || !pass) { say("Enter email and password."); return; }
+      const id = parseId($("authUser").value), pass = $("authPass").value;
+      if (id.err) { say(id.err); return; }
+      if (!pass) { say("Enter your password."); return; }
+      if (kind === "register") {
+        if (pass.length < 6) { say(MSG["auth/weak-password"]); return; }
+        if (id.type === "mobile") { await sendOtp(id.mobile, "register", pass); return; }
+      }
       say("Please wait...");
       try {
-        if (kind === "register") await A.createUserWithEmailAndPassword(auth, email, pass);
-        else await A.signInWithEmailAndPassword(auth, email, pass);
+        if (kind === "register") await A.createUserWithEmailAndPassword(auth, id.email, pass);
+        else await A.signInWithEmailAndPassword(auth, id.email, pass);
         $("authPass").value = "";
-      } catch (e) { say(MSG[e.code] || "Sign-in failed (" + (e.code || "error") + ")."); }
+      } catch (e) { say(e.code === "auth/invalid-credential" ? "Wrong email/mobile or password." : (MSG[e.code] || "Sign-in failed (" + (e.code || "error") + ").")); }
+    }
+    async function forgot() {
+      const id = parseId($("authUser").value);
+      if (id.err) { say(id.err); return; }
+      if (id.type === "mobile") { await sendOtp(id.mobile, "reset"); return; }
+      try { await A.sendPasswordResetEmail(auth, id.email); say("If this email has an account, a password reset link has been sent. Check inbox and spam."); }
+      catch (e) { say(MSG[e.code] || "Could not send reset email (" + (e.code || "error") + ")."); }
     }
     $("loginBtn").onclick = () => run("login");
     $("registerBtn").onclick = () => run("register");
+    $("forgotBtn").onclick = forgot;
+    $("authPass").addEventListener("keydown", (e) => { if (e.key === "Enter") run("login"); });
     $("logoutBtn").onclick = async function () {
       if (user) {
         if (!(await push(true))) { say("Could not save to the cloud, so you were not logged out. Check the connection and try again."); return; }
@@ -1482,21 +1669,122 @@ html[data-theme] .dup-chk { accent-color: rgb(var(--c1)); }
       location.reload();
     };
 
-    A.onAuthStateChanged(auth, async function (u) {
-      user = u;
-      if (!u) {
-        try { localStorage.removeItem("olt_logged_user"); } catch (e) {}
-        say("Not logged in");
-        $("logoutBtn").hidden = true; $("loginBtn").hidden = false; $("registerBtn").hidden = false;
-        return;
-      }
-      try { localStorage.setItem("olt_logged_user", u.email); } catch (e) {}
-      $("logoutBtn").hidden = false; $("loginBtn").hidden = true; $("registerBtn").hidden = true;
-      say("Logged in as: " + u.email + " (cloud sync on)");
-      await pull();
+    // ---------- Admin panel ----------
+    const isAdmin = (u) => !!(u && u.email && ADMIN_EMAILS.map((x) => x.toLowerCase()).indexOf(u.email.toLowerCase()) >= 0);
+    const esc = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const dayKey = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+    let admUnsub = null, admUsers = [], admLogs = [], admLimit = 100;
+    $("admLogo").onclick = () => {
+      const sec = $("adminPanel");
+      if (isAdmin(user) && sec && !sec.hidden) sec.scrollIntoView({ behavior: "smooth", block: "start" });
+      else { $("account").scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(() => $("authUser").focus(), 400); }
+    };
+
+    function admSetErr(t) { const e = $("admErr"); if (!e) return; e.textContent = t || ""; e.classList.toggle("hidden", !t); }
+    function admStop() {
+      if (admUnsub) { admUnsub(); admUnsub = null; }
+      const sec = $("adminPanel"), ml = $("adminMenuLink");
+      if (sec) sec.hidden = true; if (ml) ml.hidden = true;
+      $("admDot").classList.add("hidden");
+    }
+    function admStart() {
+      if (admUnsub) return;
+      $("adminPanel").hidden = false; $("adminMenuLink").hidden = false;
+      $("admDot").classList.remove("hidden");
+      admUnsub = F.onSnapshot(F.collection(db, "users"), (qs) => {
+        admSetErr(""); $("admLive").textContent = "Live";
+        admUsers = qs.docs.map((d) => ({ id: d.id, doc: d.data() || {} }));
+        admBuild();
+      }, (e) => {
+        $("admLive").textContent = "Offline";
+        admSetErr("Admin data could not be read. Add the admin read rule in Firestore (see the setup note in the code). " + (e && e.code ? "(" + e.code + ")" : ""));
+      });
+    }
+    function admTime(r, fallback) { const t = Date.parse(r.date); return isNaN(t) ? fallback : t; }
+    function admBuild() {
+      const today = dayKey();
+      let tot = { V: 0, C: 0, today: 0 };
+      admLogs = [];
+      const rows = admUsers.map((u) => {
+        const d = u.doc.data || {};
+        const recs = parseArr(d.olt_onu_records), saved = parseArr(d.olt_saved_commands);
+        let c = {}; try { c = JSON.parse(d.olt_config_counts || "{}"); } catch (e) {}
+        const v = Number(c.V) || 0, cc = Number(c.C) || 0, td = ((c.daily || {})[today]) || {}, tdn = (Number(td.V) || 0) + (Number(td.C) || 0);
+        const upd = u.doc.updatedAt && u.doc.updatedAt.toDate ? u.doc.updatedAt.toDate().getTime() : 0;
+        const email = u.doc.loginId || u.doc.email || (recs[0] && recs[0].user) || u.id.slice(0, 8);
+        tot.V += v; tot.C += cc; tot.today += tdn;
+        recs.forEach((r, i) => admLogs.push({ r: r, email: email, t: admTime(r, upd - i) }));
+        return { email: email, v: v, c: cc, today: tdn, logs: recs.length, presets: saved.length, upd: upd };
+      }).sort((a, b) => b.upd - a.upd);
+      admLogs.sort((a, b) => b.t - a.t);
+
+      $("admUsers").textContent = rows.length; $("admToday").textContent = tot.today;
+      $("admTotal").textContent = tot.V + tot.C; $("admV").textContent = tot.V; $("admC").textContent = tot.C;
+
+      $("admUserRows").innerHTML = rows.length ? rows.map((r) =>
+        '<tr><td class="p-3 font-semibold text-white">' + esc(r.email) + '</td><td class="p-3 text-amber-300 font-bold">' + r.today + '</td><td class="p-3">' + r.v + '</td><td class="p-3">' + r.c + '</td><td class="p-3">' + r.logs + '</td><td class="p-3">' + r.presets + '</td><td class="p-3 whitespace-nowrap">' + (r.upd ? esc(new Date(r.upd).toLocaleString()) : "—") + '</td><td class="p-3"><button type="button" class="adm-view btn btn-gradient-secondary text-[11px] px-2.5 py-1 rounded-lg font-bold" data-u="' + esc(r.email) + '">View</button></td></tr>'
+      ).join("") : '<tr><td colspan="8" class="p-4 text-center text-slate-500">No user data yet.</td></tr>';
+
+      const sel = $("admFUser"), cur = sel.value;
+      sel.innerHTML = '<option value="">All users</option>' + rows.map((r) => '<option value="' + esc(r.email) + '">' + esc(r.email) + '</option>').join("");
+      sel.value = rows.some((r) => r.email === cur) ? cur : "";
+      admRenderLog();
+    }
+    function admFiltered() {
+      const fu = $("admFUser").value, fo = $("admFOlt").value, q = $("admFText").value.trim().toLowerCase();
+      return admLogs.filter((x) => {
+        if (fu && x.email !== fu) return false;
+        if (fo && x.r.mode !== fo) return false;
+        if (q && [x.r.date, x.r.pon, x.r.index, x.r.vlan, x.r.sn, x.email].join(" ").toLowerCase().indexOf(q) < 0) return false;
+        return true;
+      });
+    }
+    function admRenderLog() {
+      const list = admFiltered(), shown = list.slice(0, admLimit);
+      $("admLogRows").innerHTML = shown.length ? shown.map((x) =>
+        '<tr><td class="p-3 whitespace-nowrap">' + esc(x.r.date) + '</td><td class="p-3">' + esc(x.email) + '</td><td class="p-3">' + (x.r.mode === "V" ? "VSOL" : "C-Data") + '</td><td class="p-3">' + esc(x.r.pon || "—") + '</td><td class="p-3">' + esc(x.r.index) + '</td><td class="p-3">' + esc(x.r.vlan) + '</td><td class="p-3 font-mono">' + esc(x.r.sn) + '</td></tr>'
+      ).join("") : '<tr><td colspan="7" class="p-4 text-center text-slate-500">No records.</td></tr>';
+      $("admLogInfo").textContent = "Showing " + shown.length + " of " + list.length;
+      $("admMore").hidden = list.length <= admLimit;
+    }
+    function admCsv() {
+      const q = (v) => '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"';
+      const lines = [["Date/Time", "User", "OLT", "PON", "Index", "VLAN", "SN"].map(q).join(",")].concat(admFiltered().map((x) => [x.r.date, x.email, x.r.mode === "V" ? "VSOL" : "C-Data", x.r.pon, x.r.index, x.r.vlan, x.r.sn].map(q).join(",")));
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob(["\ufeff" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" }));
+      a.download = "all-users-work-log.csv"; document.body.appendChild(a); a.click(); a.remove();
+    }
+    ["admFUser", "admFOlt"].forEach((id) => $(id).addEventListener("change", () => { admLimit = 100; admRenderLog(); }));
+    $("admFText").addEventListener("input", () => { admLimit = 100; admRenderLog(); });
+    $("admMore").addEventListener("click", () => { admLimit += 200; admRenderLog(); });
+    $("admExport").addEventListener("click", admCsv);
+    $("admUserRows").addEventListener("click", (e) => {
+      const b = e.target.closest(".adm-view"); if (!b) return;
+      $("admFUser").value = b.dataset.u; admLimit = 100; admRenderLog();
+      $("admLogRows").scrollIntoView({ behavior: "smooth", block: "nearest" });
     });
 
-    setInterval(() => { push(false); }, 4000);
+    async function onUser(u) {
+      user = u;
+      if (!u) {
+        admStop();
+        try { localStorage.removeItem("olt_logged_user"); } catch (e) {}
+        if (!authBusy) say("Not logged in");
+        $("logoutBtn").hidden = true; $("loginBtn").hidden = false; $("registerBtn").hidden = false; $("forgotBtn").hidden = false;
+        window.setAuthView(null);
+        return;
+      }
+      const lid = loginIdOf(u);
+      try { localStorage.setItem("olt_logged_user", lid); } catch (e) {}
+      $("logoutBtn").hidden = false; $("loginBtn").hidden = true; $("registerBtn").hidden = true; $("forgotBtn").hidden = true;
+      say("Logged in as: " + lid + (isAdmin(u) ? " (admin, cloud sync on)" : " (cloud sync on)"));
+      window.setAuthView(lid, isAdmin(u));
+      if (isAdmin(u)) admStart(); else admStop();
+      await pull();
+    }
+    A.onAuthStateChanged(auth, function (u) { if (authBusy) return; onUser(u); });
+
+    setInterval(() => { push(false); }, 2000);
     document.addEventListener("visibilitychange", () => { if (document.hidden) push(false); });
   });
 })();
