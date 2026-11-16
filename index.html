@@ -232,96 +232,67 @@ html[data-theme] .dup-chk { accent-color: rgb(var(--c1)); }
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
 
   <!-- TOPBAR HEADER -->
-  <header class="topbar glass-panel rounded-2xl p-4 sm:p-5 mb-8 flex flex-col md:flex-row items-center justify-between gap-4 relative overflow-hidden">
-    <div class="absolute -right-10 -top-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
+  <header class="topbar glass-panel rounded-2xl p-3 sm:p-4 mb-6 flex items-center justify-between gap-4 relative z-40">
+    <div class="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none"><div class="absolute -right-10 -top-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-2xl"></div></div>
     
     <div class="brand flex items-center gap-4 z-10">
       <div class="brandmark w-12 h-12 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-cyan-400 flex items-center justify-center text-white font-extrabold text-xl shadow-lg shadow-indigo-500/30">
         <i class="fa-solid fa-network-wired"></i>
       </div>
-      <div>
-        <div class="brandtitle text-xl font-extrabold bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent flex items-center gap-2">
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <div class="brandtitle text-xl font-extrabold whitespace-nowrap bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent flex items-center gap-2">
           ONU Config Manager
-          <span class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold">v2.0 Pro</span>
         </div>
-        <div class="text-xs text-slate-400 font-medium flex items-center gap-2 mt-0.5">
+        <div class="text-xs text-slate-400 font-medium flex items-center gap-2 whitespace-nowrap">
           <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           VSOL &amp; C-Data GPON OLT Automated Suite
         </div>
       </div>
     </div>
 
-    <!-- Navigation Bar -->
-    <nav class="navlinks flex flex-wrap gap-2 text-xs sm:text-sm font-semibold z-10" aria-label="Main navigation">
-      <a href="#dashboard" class="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white transition-all border border-slate-700/50 flex items-center gap-1.5">
-        <i class="fa-solid fa-chart-pie text-indigo-400"></i> Dashboard
-      </a>
-      <a href="#config" class="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white transition-all border border-slate-700/50 flex items-center gap-1.5">
-        <i class="fa-solid fa-sliders text-cyan-400"></i> Config Generator
-      </a>
-      <a href="#saved" class="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white transition-all border border-slate-700/50 flex items-center gap-1.5">
-        <i class="fa-solid fa-bookmark text-amber-400"></i> Saved Presets
-      </a>
-      <a href="#onuList" class="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white transition-all border border-slate-700/50 flex items-center gap-1.5">
-        <i class="fa-solid fa-list-check text-emerald-400"></i> ONU Work Log
-      </a>
-      <a href="#finder" class="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white transition-all border border-slate-700/50 flex items-center gap-1.5">
-        <i class="fa-solid fa-magnifying-glass text-purple-400"></i> Index Finder
-      </a>
-      <a href="#dupfinder" class="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white transition-all border border-slate-700/50 flex items-center gap-1.5">
-        <i class="fa-solid fa-clone text-rose-400"></i> Duplicate Finder
-      </a>
-    </nav>
+    <!-- Menu -->
+    <div class="relative z-10">
+      <button id="menuBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="menuPanel" class="px-3.5 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-200 border border-slate-700/50 text-sm font-semibold flex items-center gap-2 transition-all">
+        <i class="fa-solid fa-bars" id="menuIcon"></i> Menu
+      </button>
+      <nav id="menuPanel" class="hidden absolute right-0 mt-2 w-56 p-2 rounded-xl bg-slate-900/95 backdrop-blur border border-slate-700 shadow-2xl shadow-black/50 text-sm font-semibold" aria-label="Main navigation">
+        <a href="#dashboard" class="menu-item px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-700/70 transition-colors flex items-center gap-2.5"><i class="fa-solid fa-chart-pie text-indigo-400 w-4 text-center"></i> Dashboard</a>
+        <a href="#config" class="menu-item px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-700/70 transition-colors flex items-center gap-2.5"><i class="fa-solid fa-sliders text-cyan-400 w-4 text-center"></i> Config Generator</a>
+        <a href="#saved" class="menu-item px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-700/70 transition-colors flex items-center gap-2.5"><i class="fa-solid fa-bookmark text-amber-400 w-4 text-center"></i> Saved Presets</a>
+        <a href="#onuList" class="menu-item px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-700/70 transition-colors flex items-center gap-2.5"><i class="fa-solid fa-list-check text-emerald-400 w-4 text-center"></i> ONU Work Log</a>
+        <a href="#finder" class="menu-item px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-700/70 transition-colors flex items-center gap-2.5"><i class="fa-solid fa-magnifying-glass text-purple-400 w-4 text-center"></i> Index Finder</a>
+        <a href="#dupfinder" class="menu-item px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-700/70 transition-colors flex items-center gap-2.5"><i class="fa-solid fa-clone text-rose-400 w-4 text-center"></i> Duplicate Finder</a>
+      </nav>
+    </div>
   </header>
 
   <!-- STATS DASHBOARD -->
-  <section id="dashboard" class="glass-panel rounded-2xl p-6 mb-8 relative overflow-hidden">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="text-lg font-bold text-white flex items-center gap-2">
+  <section id="dashboard" class="glass-panel rounded-xl px-3 py-2.5 mb-6">
+    <div class="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4">
+      <h2 class="text-sm font-bold text-white flex items-center gap-2 whitespace-nowrap">
         <i class="fa-solid fa-gauge-high text-indigo-400"></i> Configuration Dashboard
       </h2>
-      <span class="text-xs text-slate-400 bg-slate-800/80 px-2.5 py-1 rounded-full border border-slate-700">Offline &amp; Browser-Stored</span>
-    </div>
-
-    <div class="dashgrid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <!-- Stat 1 -->
-      <div class="stat glass-card rounded-xl p-4 border border-indigo-500/20 relative overflow-hidden">
-        <div class="absolute right-3 top-3 w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-lg">
-          <i class="fa-regular fa-calendar-check"></i>
-        </div>
-        <div class="statlabel text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Today's Configs</div>
-        <div class="statnum text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400" id="countToday">0</div>
-        <div class="hint text-xs text-slate-500 mt-1">Generated today</div>
+      <div class="dashgrid grid grid-cols-2 sm:grid-cols-4 gap-2 flex-1">
+      <div class="stat flex items-center gap-2 rounded-lg bg-slate-900/50 border border-indigo-500/20 px-3 py-1.5 min-w-0">
+        <i class="fa-regular fa-calendar-check text-indigo-400 text-xs"></i>
+        <span class="statlabel text-[11px] font-semibold text-slate-400 truncate">Today</span>
+        <span class="statnum ml-auto text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400" id="countToday">0</span>
       </div>
-
-      <!-- Stat 2 -->
-      <div class="stat glass-card rounded-xl p-4 border border-cyan-500/20 relative overflow-hidden">
-        <div class="absolute right-3 top-3 w-10 h-10 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-lg">
-          <i class="fa-solid fa-layer-group"></i>
-        </div>
-        <div class="statlabel text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Configs</div>
-        <div class="statnum text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400" id="countTotal">0</div>
-        <div class="hint text-xs text-slate-500 mt-1">All OLT types</div>
+      <div class="stat flex items-center gap-2 rounded-lg bg-slate-900/50 border border-cyan-500/20 px-3 py-1.5 min-w-0">
+        <i class="fa-solid fa-layer-group text-cyan-400 text-xs"></i>
+        <span class="statlabel text-[11px] font-semibold text-slate-400 truncate">Total</span>
+        <span class="statnum ml-auto text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400" id="countTotal">0</span>
       </div>
-
-      <!-- Stat 3 -->
-      <div class="stat glass-card rounded-xl p-4 border border-emerald-500/20 relative overflow-hidden">
-        <div class="absolute right-3 top-3 w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg">
-          <i class="fa-solid fa-server"></i>
-        </div>
-        <div class="statlabel text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">VSOL Configs</div>
-        <div class="statnum text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400" id="countVsol">0</div>
-        <div class="hint text-xs text-slate-500 mt-1">VSOL GPON OLTs</div>
+      <div class="stat flex items-center gap-2 rounded-lg bg-slate-900/50 border border-emerald-500/20 px-3 py-1.5 min-w-0">
+        <i class="fa-solid fa-server text-emerald-400 text-xs"></i>
+        <span class="statlabel text-[11px] font-semibold text-slate-400 truncate">VSOL</span>
+        <span class="statnum ml-auto text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400" id="countVsol">0</span>
       </div>
-
-      <!-- Stat 4 -->
-      <div class="stat glass-card rounded-xl p-4 border border-amber-500/20 relative overflow-hidden">
-        <div class="absolute right-3 top-3 w-10 h-10 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center text-lg">
-          <i class="fa-solid fa-network-wired"></i>
-        </div>
-        <div class="statlabel text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">C-Data Configs</div>
-        <div class="statnum text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400" id="countCdata">0</div>
-        <div class="hint text-xs text-slate-500 mt-1">C-Data GPON OLTs</div>
+      <div class="stat flex items-center gap-2 rounded-lg bg-slate-900/50 border border-amber-500/20 px-3 py-1.5 min-w-0">
+        <i class="fa-solid fa-network-wired text-amber-400 text-xs"></i>
+        <span class="statlabel text-[11px] font-semibold text-slate-400 truncate">C-Data</span>
+        <span class="statnum ml-auto text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400" id="countCdata">0</span>
+      </div>
       </div>
     </div>
   </section>
@@ -1573,6 +1544,16 @@ html[data-theme] .dup-chk { accent-color: rgb(var(--c1)); }
   try { saved = localStorage.getItem(KEY) || "indigo"; } catch (e) {}
   apply(OK.indexOf(saved) >= 0 ? saved : "indigo");
 })();
+
+  (function(){
+    var btn=document.getElementById("menuBtn"),panel=document.getElementById("menuPanel"),icon=document.getElementById("menuIcon");
+    if(!btn||!panel)return;
+    function setOpen(o){panel.classList.toggle("hidden",!o);btn.setAttribute("aria-expanded",o?"true":"false");icon.className="fa-solid "+(o?"fa-xmark":"fa-bars");}
+    btn.addEventListener("click",function(e){e.stopPropagation();setOpen(panel.classList.contains("hidden"));});
+    panel.addEventListener("click",function(e){if(e.target.closest("a"))setOpen(false);});
+    document.addEventListener("click",function(e){if(!panel.contains(e.target)&&e.target!==btn)setOpen(false);});
+    document.addEventListener("keydown",function(e){if(e.key==="Escape")setOpen(false);});
+  })();
 </script>
 
 </body>
