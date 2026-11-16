@@ -536,6 +536,11 @@ html[data-theme] .dup-chk { accent-color: rgb(var(--c1)); }
         </tbody>
       </table>
     </div>
+    <div id="onuMoreWrap" class="hidden mt-3 text-center">
+      <button id="onuMoreBtn" type="button" class="btn btn-gradient-secondary text-xs px-4 py-2 rounded-xl font-bold inline-flex items-center gap-1.5">
+        <i class="fa-solid fa-chevron-down" id="onuMoreIcon"></i> <span id="onuMoreText">Show more</span>
+      </button>
+    </div>
   </section>
 
   <!-- INDEX FINDER -->
@@ -761,15 +766,18 @@ html[data-theme] .dup-chk { accent-color: rgb(var(--c1)); }
     });
   }
   
+  const ONU_PREVIEW=2; let onuExpanded=false;
   function renderOnus(){
-    const body=$("onuRows"),items=readArray("olt_onu_records");
+    const body=$("onuRows"),items=readArray("olt_onu_records"),wrap=$("onuMoreWrap");
     body.textContent="";
     if(!items.length){
       const tr=document.createElement("tr"),td=document.createElement("td");
       td.colSpan=7;td.textContent="No copied ONU records yet.";td.className="p-4 text-center text-slate-500";
-      tr.appendChild(td);body.appendChild(tr);return;
+      tr.appendChild(td);body.appendChild(tr);
+      wrap.classList.add("hidden");onuExpanded=false;return;
     }
-    items.slice(0,200).forEach(o=>{
+    const all=items.slice(0,200),visible=onuExpanded?all:all.slice(0,ONU_PREVIEW);
+    visible.forEach(o=>{
       const tr=document.createElement("tr");
       tr.className="hover:bg-slate-800/50 transition-colors";
       [o.date,o.mode==="V"?"VSOL":"C-Data",o.pon||"—",o.index,o.vlan,o.sn,o.user].forEach((v, idx)=>{
@@ -785,6 +793,12 @@ html[data-theme] .dup-chk { accent-color: rgb(var(--c1)); }
       });
       body.appendChild(tr);
     });
+    const hiddenCount=all.length-ONU_PREVIEW;
+    if(hiddenCount>0){
+      wrap.classList.remove("hidden");
+      $("onuMoreText").textContent=onuExpanded?"Show less":"Show more ("+hiddenCount+" more)";
+      $("onuMoreIcon").className="fa-solid "+(onuExpanded?"fa-chevron-up":"fa-chevron-down");
+    } else { wrap.classList.add("hidden"); onuExpanded=false; }
   }
   
   function downloadFile(name,content,type){
@@ -1031,7 +1045,8 @@ html[data-theme] .dup-chk { accent-color: rgb(var(--c1)); }
     };
     
     $("clearSaved").onclick=function(){if(confirm("Delete all saved command sets in this browser?")){saveArray("olt_saved_commands",[]);renderSaved();}};
-    $("clearOnus").onclick=function(){if(confirm("Delete the local ONU work log?")){saveArray("olt_onu_records",[]);renderOnus();}};
+    $("clearOnus").onclick=function(){if(confirm("Delete the local ONU work log?")){saveArray("olt_onu_records",[]);onuExpanded=false;renderOnus();}};
+    $("onuMoreBtn").onclick=function(){onuExpanded=!onuExpanded;renderOnus();};
     
     $("exportOnus").onclick=function(){
       const a=readArray("olt_onu_records"),head=["Date/Time","OLT","PON","Index","VLAN","SN","User"],lines=[head.map(csvEscape).join(",")].concat(a.map(o=>[o.date,o.mode==="V"?"VSOL":"C-Data",o.pon,o.index,o.vlan,o.sn,o.user].map(csvEscape).join(",")));
